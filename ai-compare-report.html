@@ -1,0 +1,803 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI写作助手竞品横评报告</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<style>
+  :root{
+    color-scheme: dark;
+    --plane:       #0d0d0d;
+    --surface-1:   #1a1a19;
+    --surface-2:   #212120;
+    --text-primary:#ffffff;
+    --text-secondary:#c3c2b7;
+    --muted:       #898781;
+    --grid:        #2c2c2a;
+    --axis:        #383835;
+    --border:      rgba(255,255,255,0.10);
+    --good:        #0ca30c;
+    --warning:     #fab219;
+    --critical:    #d03b3b;
+    --review:      #ec835a; /* 人工复核标记（保留状态色，不复用产品色） */
+
+    /* 产品 = 实体色，全页一致 */
+    --p1: #3987e5; /* 豆包 */
+    --p2: #d95926; /* 通义千问 */
+    --p3: #199e70; /* 文心一言 */
+    --p4: #c98500; /* Kimi */
+    --p5: #d55181; /* Claude */
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{
+    background:var(--plane);
+    color:var(--text-primary);
+    font-family:system-ui,-apple-system,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;
+    line-height:1.7;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:1200px;margin:0 auto;padding:0 24px 96px}
+
+  /* ---------- Header ---------- */
+  header{
+    padding:72px 0 40px;
+    border-bottom:1px solid var(--border);
+    margin-bottom:56px;
+  }
+  .eyebrow{
+    font-size:12px;letter-spacing:.14em;text-transform:uppercase;
+    color:var(--muted);margin-bottom:16px;
+  }
+  h1{font-size:clamp(28px,4vw,44px);line-height:1.25;font-weight:700;letter-spacing:-.01em}
+  h1 .sep{color:var(--muted);font-weight:300}
+  .lede{margin-top:20px;font-size:16px;color:var(--text-secondary);max-width:760px}
+
+  .meta-row{display:flex;flex-wrap:wrap;gap:10px;margin-top:28px}
+  .chip{
+    font-size:12.5px;padding:5px 12px;border-radius:999px;
+    background:var(--surface-1);border:1px solid var(--border);color:var(--text-secondary);
+  }
+
+  /* ---------- Section ---------- */
+  section{margin-bottom:72px}
+  h2{
+    font-size:13px;letter-spacing:.12em;text-transform:uppercase;
+    color:var(--muted);font-weight:600;
+    padding-bottom:12px;margin-bottom:28px;border-bottom:1px solid var(--border);
+  }
+  h3{font-size:19px;font-weight:650;margin-bottom:6px}
+  .sub{font-size:14px;color:var(--muted);margin-bottom:24px}
+
+  /* ---------- Cards ---------- */
+  .card{
+    background:var(--surface-1);
+    border:1px solid var(--border);
+    border-radius:14px;
+    padding:28px;
+  }
+  .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+
+  /* ---------- Intro brief ---------- */
+  .brief{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+  .brief .card{padding:24px}
+  .brief h4{font-size:14px;font-weight:650;margin-bottom:14px;display:flex;align-items:center;gap:8px}
+  .dot{width:8px;height:8px;border-radius:2px;flex:none;display:inline-block}
+  .brief p,.brief li{font-size:14px;color:var(--text-secondary)}
+  .brief ul{list-style:none}
+  .brief li{padding:5px 0;border-bottom:1px solid var(--border)}
+  .brief li:last-child{border-bottom:none}
+
+  /* ---------- Chart ---------- */
+  .chart-head{display:flex;justify-content:space-between;align-items:flex-start;gap:24px;flex-wrap:wrap;margin-bottom:24px}
+  .chart-box{position:relative;height:380px}
+  .chart-note{font-size:12.5px;color:var(--muted);margin-top:16px;padding-top:16px;border-top:1px solid var(--border)}
+
+  /* 3 列铺排 → 5 张卡片自然分成 3 + 2 两行 */
+  .radar-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+  .radar-cell{background:var(--surface-2);border:1px solid var(--border);border-radius:12px;padding:14px}
+  .radar-title{display:flex;align-items:center;gap:7px;font-size:13px;font-weight:650;margin-bottom:4px}
+  .radar-score{font-size:11.5px;color:var(--muted);font-variant-numeric:tabular-nums}
+  .radar-box{position:relative;height:190px;margin-top:6px}
+
+  /* ---------- Table ---------- */
+  .table-scroll{overflow-x:auto;border:1px solid var(--border);border-radius:14px;background:var(--surface-1)}
+  table{border-collapse:separate;border-spacing:0;width:100%;font-size:13.5px;min-width:1060px}
+  th,td{padding:14px 16px;text-align:left;vertical-align:top;border-bottom:1px solid var(--border)}
+  thead th{
+    position:sticky;top:0;z-index:2;
+    background:var(--surface-2);
+    font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);font-weight:600;
+    white-space:nowrap;
+  }
+  thead th .pname{display:flex;align-items:center;gap:8px;color:var(--text-primary);font-size:13.5px;text-transform:none;letter-spacing:0}
+  tbody th{
+    position:sticky;left:0;z-index:1;
+    background:var(--surface-1);
+    font-weight:600;color:var(--text-secondary);font-size:12.5px;white-space:nowrap;
+    border-right:1px solid var(--border);
+  }
+  tbody tr:last-child th,tbody tr:last-child td{border-bottom:none}
+  td{color:var(--text-secondary);line-height:1.65}
+  td strong{color:var(--text-primary);font-weight:600}
+  .num{font-variant-numeric:tabular-nums}
+  /* 橙色 = 人工复核确认的数据 */
+  .flag{color:var(--review);font-size:12px}
+  .flag strong{color:inherit}
+  .flag.num{font-variant-numeric:tabular-nums;font-weight:600}
+
+  /* ---------- Opportunity ---------- */
+  .opp{display:grid;grid-template-columns:1fr;gap:16px}
+  .opp-item{
+    background:var(--surface-1);border:1px solid var(--border);border-radius:14px;
+    padding:26px 28px;display:grid;grid-template-columns:52px 1fr;gap:22px;
+  }
+  .opp-idx{
+    font-size:26px;font-weight:700;color:var(--muted);
+    font-variant-numeric:tabular-nums;line-height:1;
+  }
+  .opp-item h4{font-size:16.5px;font-weight:650;margin-bottom:10px}
+  .opp-body p{font-size:14px;color:var(--text-secondary)}
+  .opp-tags{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
+  .tag{font-size:11.5px;padding:4px 10px;border-radius:6px;background:var(--surface-2);border:1px solid var(--border);color:var(--muted)}
+  .tag.evi{color:var(--good);border-color:rgba(12,163,12,.35)}
+
+  /* ---------- Retro ---------- */
+  .retro{
+    background:var(--surface-1);border:1px solid var(--border);border-radius:14px;padding:32px;
+  }
+  .retro p{font-size:14.5px;color:var(--text-secondary);margin-bottom:14px}
+  .retro p:last-child{margin-bottom:0}
+  .retro strong{color:var(--text-primary)}
+
+  details{margin-top:22px;border-top:1px solid var(--border);padding-top:18px}
+  summary{cursor:pointer;font-size:13px;color:var(--muted);list-style:none}
+  summary::-webkit-details-marker{display:none}
+  summary::before{content:"▸ ";color:var(--muted)}
+  details[open] summary::before{content:"▾ "}
+  details table{margin-top:16px;min-width:auto;font-size:13px}
+
+  footer{
+    border-top:1px solid var(--border);padding-top:28px;
+    font-size:12.5px;color:var(--muted);
+  }
+  footer a{color:var(--text-secondary);text-decoration:none;border-bottom:1px solid var(--border)}
+  footer a:hover{color:var(--text-primary)}
+
+  @media (max-width:1080px){
+    .radar-grid{grid-template-columns:repeat(2,1fr)}
+  }
+  @media (max-width:860px){
+    .brief{grid-template-columns:1fr}
+    .grid-2{grid-template-columns:1fr}
+    .opp-item{grid-template-columns:1fr;gap:10px}
+    .wrap{padding:0 18px 64px}
+  }
+  @media (max-width:560px){
+    .radar-grid{grid-template-columns:1fr}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- ============ 1. 标题 ============ -->
+  <header>
+    <div class="eyebrow">Competitive Research · 2026 Q3</div>
+    <h1>AI 写作助手竞品横评报告<br><span class="sep">｜</span>AI 产品作品集项目</h1>
+    <p class="lede">
+      选取国内外 5 款主流 AI 写作助手，从定位、模型能力、定价、特色功能、用户口碑五个维度做量化横向对比，
+      输出可支撑产品决策的机会点。数据采集自 2026 年 9 月公开官方信息与第三方测评。
+    </p>
+    <div class="meta-row">
+      <span class="chip">5 个竞品</span>
+      <span class="chip">5 个评估维度</span>
+      <span class="chip">数据截止 2026-09</span>
+      <span class="chip">来源：官方定价页 / QuestMobile / 信通院</span>
+    </div>
+  </header>
+
+  <!-- ============ 2. 项目简介 ============ -->
+  <section>
+    <h2>01 · 项目简介</h2>
+    <div class="brief">
+      <div class="card">
+        <h4><span class="dot" style="background:var(--p1)"></span>调研目标</h4>
+        <ul>
+          <li>厘清 5 款产品的能力与价格边界</li>
+          <li>定位尚未被满足的写作场景缺口</li>
+          <li>为自研写作助手的产品定义提供依据</li>
+          <li>验证 AI 辅助产品调研的完整流程</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h4><span class="dot" style="background:var(--p3)"></span>竞品名单</h4>
+        <ul>
+          <li><strong>豆包</strong>｜字节跳动 · 3.82 亿 MAU</li>
+          <li><strong>通义千问</strong>｜阿里巴巴 · 1.67 亿 MAU</li>
+          <li><strong>文心一言</strong>｜百度 · 独立 App &lt;500 万</li>
+          <li><strong>Kimi</strong>｜月之暗面 · 长文本 / Agent</li>
+          <li><strong>Claude</strong>｜Anthropic · 海外专业向</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h4><span class="dot" style="background:var(--p5)"></span>评估维度</h4>
+        <ul>
+          <li><strong>D1</strong> 核心定位 &amp; 目标用户</li>
+          <li><strong>D2</strong> 模型能力：上下文 / 长文本 / 多模态</li>
+          <li><strong>D3</strong> 定价策略：免费额度 / 付费套餐</li>
+          <li><strong>D4</strong> 特色功能：模板 / 上传 / 联网 / Agent</li>
+          <li><strong>D5</strong> 短板与用户吐槽点</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 3. 可视化图表 ============ -->
+  <section>
+    <h2>02 · 数据可视化</h2>
+
+    <!-- 柱状图 -->
+    <div class="card" style="margin-bottom:20px">
+      <div class="chart-head">
+        <div>
+          <h3>免费可用上下文窗口大小对比</h3>
+          <p class="sub">单位：千 token（K）。取各产品<strong>免费档位</strong>可调用的最大上下文，非付费/API 上限。</p>
+        </div>
+      </div>
+      <div class="chart-box" style="height:400px">
+        <canvas id="ctxChart" role="img" aria-label="五款产品免费上下文窗口柱状图：文心一言 10000K、通义千问 1000K、豆包 256K、Kimi 256K、Claude 200K"></canvas>
+      </div>
+      <p class="chart-note">
+        <strong style="color:var(--text-secondary)">读图提示：</strong>
+        文心一言的 10000K（1000 万 token）为官方宣传口径，其 API 主力模型 ERNIE 4.5 Turbo 实际仍为 128K，
+        两者相差约 78 倍，属同一厂商内的口径落差。剔除该异常值后，主流区间落在 200K–1000K。
+      </p>
+    </div>
+
+    <!-- 雷达图（小倍数） -->
+    <div class="card">
+      <div class="chart-head">
+        <div>
+          <h3>5 项能力评分（小倍数雷达）</h3>
+          <p class="sub">评分区间 0–5，为本次调研的<strong>主观评估</strong>，依据为上下文规格、多模态覆盖、免费额度与公开测评口碑。</p>
+        </div>
+      </div>
+      <div class="radar-grid" id="radarGrid"></div>
+      <p class="chart-note">
+        拆成 5 张小图而非叠加成一张：5 条半透明多边形叠加后，色觉障碍读者无法区分其中的青绿与品红
+        （模拟 deuteranopia 下色差 ΔE 仅 1.6，远低于 8 的可辨阈值）。小倍数下每款产品的形状可直接对比，
+        产品色在整页保持一致。
+        <strong style="color:var(--text-secondary)">综合得分</strong>为标准化的 5 项均值，见每张图标题下方。
+      </p>
+    </div>
+
+    <details>
+      <summary>查看评分原始数据表</summary>
+      <div class="table-scroll" style="margin-top:14px">
+        <table>
+          <thead>
+            <tr>
+              <th>产品</th><th>长文本</th><th>多模态</th><th>联网搜索</th><th>写作质量</th><th>性价比</th><th>综合</th>
+            </tr>
+          </thead>
+          <tbody id="scoreTable"></tbody>
+        </table>
+      </div>
+    </details>
+  </section>
+
+  <!-- ============ 4. 竞品对比表 ============ -->
+  <section>
+    <h2>03 · 竞品对比明细</h2>
+    <div class="table-scroll">
+      <table>
+        <thead>
+          <tr>
+            <th>评估维度</th>
+            <th><span class="pname"><span class="dot" style="background:var(--p1)"></span>豆包</span></th>
+            <th><span class="pname"><span class="dot" style="background:var(--p2)"></span>通义千问</span></th>
+            <th><span class="pname"><span class="dot" style="background:var(--p3)"></span>文心一言</span></th>
+            <th><span class="pname"><span class="dot" style="background:var(--p4)"></span>Kimi</span></th>
+            <th><span class="pname"><span class="dot" style="background:var(--p5)"></span>Claude</span></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th>核心定位</th>
+            <td>全民通用 AI 助手，泛 C 端高频日用</td>
+            <td>全能助手 + 办公/编程，阿里生态</td>
+            <td>搜索生态内 AI 助手（已更名"百度文心助手"）</td>
+            <td>长文本研究 + Agent/编程，偏专业用户</td>
+            <td>写作/编程/研究专业助手，海外主力</td>
+          </tr>
+          <tr>
+            <th>目标用户</th>
+            <td>大众消费者、学生、轻办公</td>
+            <td>办公人群、开发者、企业</td>
+            <td>搜索存量用户</td>
+            <td>研究者、程序员、重度文本工作者</td>
+            <td>知识工作者、开发者、企业</td>
+          </tr>
+          <tr>
+            <th>月活规模</th>
+            <td><strong class="num">3.82 亿</strong><br><span style="color:var(--muted);font-size:12.5px">国内第一</span></td>
+            <td><strong class="num">1.67 亿</strong></td>
+            <td><strong class="num">&lt; 500 万</strong><br><span style="color:var(--muted);font-size:12.5px">搜索内文心助手 3.6 亿</span></td>
+            <td><span class="flag num">729 万</span></td>
+            <td><span class="flag num">5,600 万</span></td>
+          </tr>
+          <tr>
+            <th>旗舰模型</th>
+            <td>豆包 2.1 Pro / Turbo</td>
+            <td>Qwen3.8-Max<br><span style="color:var(--muted);font-size:12.5px">2.4 万亿总参 / 950 亿激活</span></td>
+            <td>文心 5.1 / 5.0</td>
+            <td>K2.5 / K2.6 / K2.7 Code / K3</td>
+            <td>Opus 5、Sonnet 5、Fable 5.1</td>
+          </tr>
+          <tr>
+            <th>上下文窗口</th>
+            <td><strong class="num">256K</strong>（2.1 Pro/Turbo）<br><span class="flag">另有 128K 口径</span></td>
+
+            <td><strong class="num">1,000,000</strong> token</td>
+            <td>5.0 宣称 <strong class="num">1000 万</strong> token<br>ERNIE 4.5 Turbo 仅 128K</td>
+            <td>K2 128K｜K2.5–2.7 <strong class="num">256K</strong>｜K3 <strong class="num">1M</strong></td>
+            <td><span class="flag">Opus 5 | Sonnet 5 | Fable 5.1<br><strong class="num">1M</strong> token</span></td>
+          </tr>
+          <tr>
+            <th>多模态</th>
+            <td>文本 + 图像 + 语音 + 视频<br>（Seedance 2.5 生视频）</td>
+            <td>文本 + 图像 + <strong>视频输入</strong><br>输出仅文本</td>
+            <td><strong>全模态</strong>：文本+图片+视频+音频<br>文本→4K/60fps 视频生成</td>
+            <td>K2.7 Code 支持多模态<br>原版 K2 视觉/音频/PDF 未宣传</td>
+            <td>文本 + 图像 + PDF<br>无原生音视频生成</td>
+          </tr>
+          <tr>
+            <th>免费版</th>
+            <td><strong>永久免费不减频</strong><br>搜索问答/写作生图/语音视频</td>
+            <td>新用户北京区 100 万 token 试用</td>
+            <td>C 端全面免费<br>（2025-04-01 起）</td>
+            <td>统一额度池<br>免费版 ≈ <strong>6 个 Agent 用量/月</strong></td>
+            <td>Free $0，额度受限</td>
+          </tr>
+          <tr>
+            <th>免费版硬限制</th>
+            <td>专家模式/高清生图/长文档解析限额；视频生成不可用</td>
+            <td>仅限新用户 / 限时活动</td>
+            <td>每日 50 次对话、单次 ≤2000 字符<br><span class="flag">另有 1000+ 次口径</span></td>
+            <td>1 次深度研究 / 3 次 OK Computer / 3 次 PPT<br>上传 50 个/日、联网 20 次/日<br><strong>额度耗尽当月全功能冻结</strong></td>
+            <td>无 1M 上下文；模型档位受限</td>
+          </tr>
+          <tr>
+            <th>个人订阅</th>
+            <td>标准 <strong class="num">68</strong> 元/月（年 688）<br>加强 <strong class="num">200</strong> 元/月（年 2048）<br>高级 <strong class="num">500</strong> 元/月（年 5088）<br>学生认证 38 元/月</td>
+            <td>Token Plan：<br>Lite <strong class="num">39</strong> 元/月<br>Standard <strong class="num">139</strong> 元/月<br>Pro <strong class="num">499</strong> 元/月</td>
+            <td><span class="flag">联合会员 <strong class="num">99</strong> 元/月</span></td>
+            <td>Andante <strong class="num">49</strong> / Moderato <strong class="num">99</strong><br>Allegretto <strong class="num">199</strong> / Allegro <strong class="num">699</strong> 元/月<br>年付折合 39/79/159/559</td>
+            <td>Pro <strong class="num">$20</strong>/月（年付 $17）<br>Max 5× <strong class="num">$100</strong>/月<br>Max 20× <strong class="num">$200</strong>/月<br>Team $25/座起</td>
+          </tr>
+          <tr>
+            <th>API 价<br><span style="font-weight:400;color:var(--muted)">元 / 百万 token<br>（Claude 为 USD）</span></th>
+            <td>2.1 Pro 输出 ≈ <strong class="num">30</strong> 元<br>2.0 Lite 输入 $0.13 / 输出 $0.76</td>
+            <td>输入 <strong class="num">12</strong> / 输出 <strong class="num">36</strong><br>缓存命中 1.5</td>
+            <td>ERNIE 4.5 Turbo <strong class="num">0.8/3.2</strong><br>ERNIE 5.0 <strong class="num">6.0/24.0</strong></td>
+            <td>K2 $0.60 / $2.50<br>K3 $3 / $15</td>
+            <td><span class="flag">Sonnet 5 <strong class="num">$2 / $10</strong><br>Opus 5 <strong class="num">$5 / $25</strong><br>Fable 5.1 <strong class="num">$5 / $50</strong></span></td>
+          </tr>
+          <tr>
+            <th>写作模板</th>
+            <td>文案/公文/小红书/PPT 场景预设</td>
+            <td>办公写作、PPT、表格、公文</td>
+            <td>公文/营销文案 + 文心一格绘画</td>
+            <td>PPT 生成、深度研究报告、长文写作</td>
+            <td>Projects 自定义写作规范、Styles</td>
+          </tr>
+          <tr>
+            <th>文件上传</th>
+            <td>✅ 长文档无损解析（付费档十万字）</td>
+            <td>✅ 文档 / 图片 / 视频</td>
+            <td>✅</td>
+            <td>✅ 50MB/个、50 个/日</td>
+            <td>✅ 文本 / 图像 / PDF</td>
+          </tr>
+          <tr>
+            <th>联网搜索</th>
+            <td>✅ 免费无限制</td>
+            <td>✅</td>
+            <td>✅ 依托百度搜索</td>
+            <td>✅ 免费 <strong class="num">20</strong> 次/日</td>
+            <td>✅</td>
+          </tr>
+          <tr>
+            <th>Agent 能力</th>
+            <td>专家模式、办公任务模式、AI 编程、智能体</td>
+            <td>并发 Agent 额度（随 Token Plan）</td>
+            <td>智能体（含擦边人格化智能体）</td>
+            <td><strong>OK Computer</strong>、深度研究<br>Kimi Code（CLI/VSCode）、并行工具调用</td>
+            <td>MCP、Claude Code、Cowork、Skills</td>
+          </tr>
+          <tr>
+            <th>核心短板</th>
+            <td>① 付费后"变笨"吐槽集中爆发<br>② 幻觉严重（机票退票、订餐、农药致 150 亩绝收；20 题错 10 题）<br>③ 68 元起步价被嫌贵</td>
+            <td>① 写作"正确的废话"、模板化<br>② 长文上下文失忆<br>③ 文献引用造假、术语不准<br>④ 内容安全漏洞<br>⑤ 语音识别方言差、自我评价过高</td>
+            <td>① 月活从头部跌至 &lt;500 万<br>② 4 年 3 次改名，企业客户流失率 +15%<br>③ 回答夹带广告、画图翻车<br>④ 交互卡顿、无"新建对话"<br>⑤ 提现活动规则反复被投诉</td>
+            <td>① 免费额度收紧，<strong>耗尽后当月基础问答也冻结</strong><br>② Agent 仅 2 并发（99 元档）<br>③ 长上下文分层加价<br>④ 无严格 JSON-schema 结构化输出</td>
+            <td>① <strong>额度消耗过快</strong>，Max 20× 被指实际仅 6–8× Pro，已遭集体诉讼<br>② 降智争议（Sonnet IQ 被指 100→87.5）<br>③ Sonnet 5 反驳说教语气、Fable 5 护栏频繁回退<br>④ 客服 96h+ 无人工响应</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="chart-note" style="border-top:none;padding-top:12px">
+      <span class="flag">橙字为人工复核。</span>
+      汇率按 1 USD ≈ 7.2 CNY 参考。
+    </p>
+  </section>
+
+  <!-- ============ 5. 产品机会分析 ============ -->
+  <section>
+    <h2>04 · 产品机会分析</h2>
+    <div class="opp">
+
+      <div class="opp-item">
+        <div class="opp-idx">01</div>
+        <div class="opp-body">
+          <h4>做「事实可核查」的写作助手，把引用溯源做成一级功能</h4>
+          <p>
+            本次调研中，5 款产品的差评<strong>没有一条指向文笔</strong>，全部指向事实性：豆包虚构退票手续费致用户损失 600 元、
+            千问文献引用造假、文心回答夹带广告。信通院数据也显示 20% 被测模型引用幻觉率 &gt;25%。
+            写作场景的真实痛点不是"写得不够好"，而是"不敢直接发出去"。
+          </p>
+          <p style="margin-top:10px">
+            落地：默认开启<strong>逐句溯源标注</strong>，每条事实性陈述挂可点击信源；无法溯源的内容自动标黄并要求用户确认；
+            导出时附带"未核实声明"清单。这条能力现有产品都没做成默认项，是明确的空白位。
+          </p>
+          <div class="opp-tags">
+            <span class="tag evi">证据：信通院 2025Q4 · 20% 模型引用幻觉率 &gt;25%</span>
+            <span class="tag">优先级 P0</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="opp-item">
+        <div class="opp-idx">02</div>
+        <div class="opp-body">
+          <h4>用「额度确定性」打差异化，正面接住 Kimi 与 Claude 的流失用户</h4>
+          <p>
+            2026 年免费额度集体收紧：Kimi 改为统一额度池，<strong>耗尽后连基础问答都冻结</strong>；
+            Claude Max 20× 被指实际只有 6–8× Pro，已引发集体诉讼。同时豆包因"一收费就变笨"口碑受损。
+            用户的焦虑不是"贵"，而是<strong>不可预测</strong>。
+          </p>
+          <p style="margin-top:10px">
+            落地：主推<strong>"写作场景不计费"</strong>——纯文本写作与修改永久免费且不限次，只对 Agent 任务、生图、超长文档解析计费；
+            额度条实时可见并给出"当前额度还能写约 N 篇"的人话换算，而非积分数字。
+          </p>
+          <div class="opp-tags">
+            <span class="tag evi">证据：Kimi 免费版额度冻结规则 · Anthropic Max 集体诉讼</span>
+            <span class="tag">优先级 P0</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="opp-item">
+        <div class="opp-idx">03</div>
+        <div class="opp-body">
+          <h4>切「长文一致性」，把长上下文从参数竞赛拉回体验竞赛</h4>
+          <p>
+            上下文长度已被卷到 1M–10M token，但用户反馈是千问"聊着聊着就忘记前面说过的设定"、
+            "历史消息还在却一脸茫然"。<strong>参数赢了，体验没赢</strong>——现有产品的长上下文是"读得进去"，
+            但不是"记得住、用得上"。
+          </p>
+          <p style="margin-top:10px">
+            落地：为长篇创作（小说、报告、系列文案）做<strong>显式记忆层</strong>——自动抽取并固化人设卡、世界观设定、
+            已用素材与结论清单，在侧栏可见可编辑；每次生成前强制注入并做冲突检测，提示"本章与第 7 章设定冲突"。
+          </p>
+          <div class="opp-tags">
+            <span class="tag evi">证据：知乎 22 章网文实测 · 千问上下文失忆反馈</span>
+            <span class="tag">优先级 P1</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="opp-item">
+        <div class="opp-idx">04</div>
+        <div class="opp-body">
+          <h4>以「中文专业写作」为矛，吃下被通用模型放弃的细分人群</h4>
+          <p>
+            通用模型的写作评价高度一致："正确的废话"、模板化、术语不准（把"用户画像"写成"用户特征描述"）。
+            而 Claude 虽写作口碑最佳，却卡在付费墙、中文支付与网络门槛上，国内用户实际不可得。
+            这里存在一个<strong>"要求高但用不上 Claude"</strong>的人群：市场/运营、咨询、公文、学术。
+          </p>
+          <p style="margin-top:10px">
+            落地：不做通用助手，做<strong>垂直写作工作台</strong>——按行业预置术语库与文体规范（如公文格式、咨询报告结构），
+            内置"反 AI 腔"改写器针对模板化表达做定向剔除，并支持企业私有术语库上传。
+          </p>
+          <div class="opp-tags">
+            <span class="tag evi">证据：千问营销学论文术语误用 · Claude 中文区不可得</span>
+            <span class="tag">优先级 P1</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="opp-item">
+        <div class="opp-idx">05</div>
+        <div class="opp-body">
+          <h4>把「免费不减频」当作长期承诺写进产品契约，而非营销话术</h4>
+          <p>
+            豆包是目前唯一宣称"免费版永久免费且不降频"的头部产品，但仍在付费版上线后遭遇大规模"变笨"质疑——
+            官方解释是算力分层与高峰期挤兑。这说明<strong>承诺本身不值钱，可验证的承诺才值钱</strong>。
+          </p>
+          <p style="margin-top:10px">
+            落地：公开<strong>服务质量看板</strong>——按日披露免费档的平均响应时延、可用率、模型版本号与变更日志；
+            版本更新提前 7 天公告并提供回滚按钮。把透明度做成品牌资产，直接对冲整个行业性的信任赤字。
+          </p>
+          <div class="opp-tags">
+            <span class="tag evi">证据：豆包"一收费就变笨"舆情 · Anthropic "nerfing" 争议</span>
+            <span class="tag">优先级 P2</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ============ 6. 项目复盘 ============ -->
+  <section>
+    <h2>05 · 项目复盘</h2>
+    <div class="retro">
+      <p>
+        本项目由大模型完成从竞品调研、数据整理、维度打分到可视化页面产出的<strong>全流程</strong>。
+      </p>
+      <p>
+        <strong>验证的结论：</strong>AI 可以独立完成"信息检索 → 结构化对比 → 结论提炼 → 可交付物产出"的完整链路，
+        把一份竞品调研从 2–3 人日压缩到约 1 小时。产品经理的角色从"执行分析"前移到<strong>定义维度、判断取舍、校验事实</strong>。
+      </p>
+      <p>
+        <strong>暴露的边界：</strong>① 事实性仍需人工兜底——本次有 5 处数据（文心订阅价、Kimi 月活、Claude 月活、
+        Claude API 价、Claude 上下文）出现多来源冲突或官方未公开，均已人工复核后以<strong>橙字</strong>标出；
+        ② AI 会倾向给出整齐好看的评分，需明确要求标注主观性与评分依据；
+        ③ 配色与可读性不能凭感觉——本项目按色盲可辨性阈值校验后，主动放弃"5 条雷达叠加"改为小倍数呈现。
+      </p>
+      <p>
+        <strong>对产品工作的启示：</strong>AI 辅助调研的价值不在更快地生成内容，而在于
+        <strong>让人把时间花在只有人能做的事上</strong>——判断哪个矛盾是真信号、哪个机会值得下注、哪条数据不能信。
+      </p>
+    </div>
+  </section>
+
+  <footer>
+    <p>
+      <strong style="color:var(--text-secondary)">数据来源：</strong>
+      <a href="https://www.alibabacloud.com/help/zh/model-studio/model-pricing" target="_blank" rel="noopener">阿里云百炼定价</a> ·
+      <a href="https://www.kimi.com/resources/kimi-k3-pricing" target="_blank" rel="noopener">Kimi 官方定价</a> ·
+      <a href="https://support.claude.com/en/articles/8606394-how-large-is-the-context-window-on-paid-claude-plans" target="_blank" rel="noopener">Anthropic 官方帮助中心</a> ·
+      <a href="https://www.cnet.com/tech/services-and-software/anthropic-sued-alleged-false-advertising-claude-max-subscription-usage-limits/" target="_blank" rel="noopener">CNET · Max 订阅诉讼</a> ·
+      <a href="https://venturebeat.com/technology/is-anthropic-nerfing-claude-users-increasingly-report-performance" target="_blank" rel="noopener">VentureBeat · nerfing 争议</a> ·
+      QuestMobile 2026-06 · 中国信通院大模型幻觉测试 2025Q4
+    </p>
+    <p style="margin-top:12px">AI 产品作品集项目 · 竞品调研与可视化 · 数据截止 2026-09 · 页面由大模型生成</p>
+  </footer>
+
+</div>
+
+<script>
+(function(){
+  "use strict";
+
+  /* ---------- 设计令牌（与 CSS 变量同源） ---------- */
+  const T = {
+    surface : '#1a1a19',
+    grid    : '#2c2c2a',
+    axis    : '#383835',
+    text    : '#ffffff',
+    second  : '#c3c2b7',
+    muted   : '#898781'
+  };
+
+  // 产品 = 实体色，整页一致；顺序即分类色槽顺序（相邻配对已验证通过）
+  const PRODUCTS = [
+    { key:'doubao',  name:'豆包',     color:'#3987e5' },
+    { key:'qwen',    name:'通义千问', color:'#d95926' },
+    { key:'wenxin',  name:'文心一言', color:'#199e70' },
+    { key:'kimi',    name:'Kimi',     color:'#c98500' },
+    { key:'claude',  name:'Claude',   color:'#d55181' }
+  ];
+
+  /* ---------- 数据 ---------- */
+  // 免费档可调用上下文，单位 K token
+  const CTX = [
+    { name:'文心一言', value:10000, claimed:true  },
+    { name:'通义千问', value:1000,  claimed:false },
+    { name:'豆包',     value:256,   claimed:false },
+    { name:'Kimi',     value:256,   claimed:false },
+    { name:'Claude',   value:200,   claimed:false }
+  ];
+  // 颜色按产品查表，不按柱序（颜色跟随实体，不跟随排名）
+  const colorOf = n => (PRODUCTS.find(p => p.name === n) || {}).color || T.muted;
+
+  const DIMS = ['长文本','多模态','联网搜索','写作质量','性价比'];
+  const SCORES = {
+    doubao: [3,5,5,3,5],
+    qwen:   [5,4,4,3,4],
+    wenxin: [4,5,4,3,5],
+    kimi:   [4,3,3,4,2],
+    claude: [5,3,4,5,3]
+  };
+
+  /* ---------- 通用：色块透明化 ---------- */
+  const alpha = (hex,a) => {
+    const h = hex.replace('#','');
+    const n = parseInt(h,16);
+    return `rgba(${(n>>16)&255},${(n>>8)&255},${n&255},${a})`;
+  };
+
+  /* ---------- 图表 1：柱状图（单一测度 → 单一色相，身份由轴标签承担） ---------- */
+  const barLabelsPlugin = {
+    id:'barLabels',
+    afterDatasetsDraw(chart){
+      const { ctx } = chart;
+      const meta = chart.getDatasetMeta(0);
+      ctx.save();
+      ctx.font = '600 13px system-ui,-apple-system,"Segoe UI",sans-serif';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'bottom';
+      meta.data.forEach((bar,i)=>{
+        const v = chart.data.datasets[0].data[i];
+        const label = v.toLocaleString('en-US') + 'K' +
+          (CTX[i].claimed ? ' *' : '');
+        ctx.fillStyle = T.second;
+        ctx.fillText(label, bar.x, bar.y - 10);
+      });
+      ctx.restore();
+    }
+  };
+
+  new Chart(document.getElementById('ctxChart'), {
+    type:'bar',
+    data:{
+      labels: CTX.map(d => d.name),
+      datasets:[{
+        label:'免费上下文（K token）',
+        data: CTX.map(d => d.value),
+        backgroundColor: '#3987e5',
+        hoverBackgroundColor: '#5598e7',
+        borderRadius:{ topLeft:4, topRight:4, bottomLeft:0, bottomRight:0 },
+        borderSkipped:'bottom',
+        barPercentage:0.52,
+        categoryPercentage:0.72
+      }]
+    },
+    options:{
+      responsive:true,
+      maintainAspectRatio:false,
+      layout:{ padding:{ top:34, right:12, left:4, bottom:0 } },
+      plugins:{
+        legend:{ display:false }, // 单系列：标题已点明测度，无需图例
+        tooltip:{
+          backgroundColor:'#212120',
+          borderColor:'rgba(255,255,255,0.10)',
+          borderWidth:1,
+          titleColor:T.text,
+          bodyColor:T.second,
+          padding:12,
+          cornerRadius:8,
+          displayColors:false,
+          callbacks:{
+            label: c => {
+              const d = CTX[c.dataIndex];
+              const txt = d.value.toLocaleString('en-US') + 'K token ≈ ' +
+                          (d.value/1000).toFixed(d.value<1000?2:1) + 'M';
+              return d.claimed ? [txt, '官方宣传口径，API 主力模型实为 128K'] : txt;
+            }
+          }
+        }
+      },
+      scales:{
+        x:{
+          grid:{ display:false },
+          border:{ color:T.axis },
+          ticks:{ color:T.second, font:{ size:13, weight:'600' }, padding:8 }
+        },
+        y:{
+          beginAtZero:true,
+          grid:{ color:T.grid, drawTicks:false },
+          border:{ display:false },
+          ticks:{
+            color:T.muted, padding:10,
+            font:{ size:12 },
+            callback: v => v >= 1000 ? (v/1000)+'M' : v+'K'
+          },
+          title:{
+            display:true, text:'免费可用上下文（token）',
+            color:T.muted, font:{ size:12 }, padding:{ bottom:6 }
+          }
+        }
+      }
+    },
+    plugins:[barLabelsPlugin]
+  });
+
+  /* ---------- 图表 2：雷达小倍数（每图单系列，身份由标题承担） ---------- */
+  const grid = document.getElementById('radarGrid');
+
+  PRODUCTS.forEach(p => {
+    const vals = SCORES[p.key];
+    const avg  = (vals.reduce((a,b)=>a+b,0) / vals.length).toFixed(2);
+
+    const cell = document.createElement('div');
+    cell.className = 'radar-cell';
+    cell.innerHTML =
+      '<div class="radar-title">' +
+        '<span class="dot" style="background:'+p.color+'"></span>' + p.name +
+      '</div>' +
+      '<div class="radar-score">综合 ' + avg + ' / 5.00</div>' +
+      '<div class="radar-box"><canvas></canvas></div>';
+    grid.appendChild(cell);
+
+    new Chart(cell.querySelector('canvas'), {
+      type:'radar',
+      data:{
+        labels: DIMS,
+        datasets:[{
+          label: p.name,
+          data: vals,
+          borderColor: p.color,
+          backgroundColor: alpha(p.color, 0.14),
+          borderWidth: 2,
+          pointBackgroundColor: p.color,
+          pointBorderColor: T.surface,
+          pointBorderWidth: 2,
+          pointRadius: 3.5,
+          pointHoverRadius: 5
+        }]
+      },
+      options:{
+        responsive:true,
+        maintainAspectRatio:false,
+        plugins:{
+          legend:{ display:false }, // 单系列：标题已点明产品
+          tooltip:{
+            backgroundColor:'#212120',
+            borderColor:'rgba(255,255,255,0.10)',
+            borderWidth:1,
+            titleColor:T.text,
+            bodyColor:T.second,
+            padding:10,
+            cornerRadius:8,
+            displayColors:false,
+            callbacks:{ label: c => c.label + '：' + c.parsed.r + ' / 5' }
+          }
+        },
+        scales:{
+          r:{
+            min:0, max:5,
+            ticks:{ stepSize:1, display:false },
+            grid:{ color:T.grid, circular:false },
+            angleLines:{ color:T.grid },
+            pointLabels:{ color:T.second, font:{ size:11.5, weight:'600' } }
+          }
+        }
+      }
+    });
+  });
+
+  /* ---------- 评分原始数据表（表格视图，供无障碍与核对） ---------- */
+  const tbody = document.getElementById('scoreTable');
+  PRODUCTS.forEach(p => {
+    const vals = SCORES[p.key];
+    const avg = (vals.reduce((a,b)=>a+b,0) / vals.length).toFixed(2);
+    const tr = document.createElement('tr');
+    tr.innerHTML =
+      '<th style="position:static;border-right:none;background:transparent;font-size:13px">' +
+        '<span style="display:inline-flex;align-items:center;gap:8px">' +
+          '<span class="dot" style="background:'+p.color+'"></span>' + p.name +
+        '</span>' +
+      '</th>' +
+      vals.map(v => '<td class="num">'+v+'</td>').join('') +
+      '<td class="num"><strong>'+avg+'</strong></td>';
+    tbody.appendChild(tr);
+  });
+
+})();
+</script>
+</body>
+</html>
