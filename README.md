@@ -35,10 +35,10 @@
 ```
 ai-competitor-project/
 ├── README.md                     # 本文件
-└── ai-compare-report.html        # 可视化调研报告（单文件，零构建）
+└── index.html                   # 可视化调研报告（单文件，零构建）
 ```
 
-**`ai-compare-report.html` 内部结构**
+**`index.html` 内部结构**
 
 | 板块 | 内容 |
 |---|---|
@@ -72,14 +72,14 @@ ai-competitor-project/
 
 **方式一：本地打开（推荐）**
 
-1. 下载 [`ai-compare-report.html`](ai-compare-report.html)
+1. 下载 [`index.html`](index.html)
 2. 双击文件，用浏览器打开即可
 
 无需安装依赖、无需构建、无需启动服务。唯一外部依赖为 Chart.js 4.4.1（通过 jsDelivr CDN 加载），**首次打开需联网**。
 
-**方式二：在线预览**
+**方式二：在线预览（GitHub Pages）**
 
-将 HTML 文件放到 GitHub Pages、Vercel 或任何静态托管服务，即可生成分享链接。
+报告已部署在 GitHub Pages，直接访问：**[https://turin-chlorine.github.io/ai-competitor-report/](https://turin-chlorine.github.io/ai-competitor-report/)**
 
 ---
 
