@@ -1,802 +1,279 @@
-<!DOCTYPE html>
-<html lang="zh-CN" data-theme="dark">
+<!doctype html>
+<html lang="zh-CN">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>AI写作助手竞品横评报告</title>
-<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
-<style>
-  :root{
-    color-scheme: dark;
-    --plane:       #0d0d0d;
-    --surface-1:   #1a1a19;
-    --surface-2:   #212120;
-    --text-primary:#ffffff;
-    --text-secondary:#c3c2b7;
-    --muted:       #898781;
-    --grid:        #2c2c2a;
-    --axis:        #383835;
-    --border:      rgba(255,255,255,0.10);
-    --good:        #0ca30c;
-    --warning:     #fab219;
-    --critical:    #d03b3b;
-    --review:      #ec835a; /* 人工复核标记（保留状态色，不复用产品色） */
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="围绕行业分析报告，比较 ChatGPT、Claude、Gemini、Kimi、Perplexity 的研究、引用、改稿与交付。附公开来源、套餐口径和产品判断。">
+  <meta name="color-scheme" content="light">
+  <title>从搜索到成稿 · AI 研究型写作助手横评</title>
+  <style>:root{--paper:#f7f6f1;--white:#fffefa;--ink:#202a30;--muted:#66716f;--line:#d9dcd5;--blue:#2553dc;--blue-soft:#edf1ff;--green:#286052;--serif:"Noto Serif SC","Songti SC",SimSun,serif;--sans:Inter,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif}
+*{box-sizing:border-box}html{scroll-behavior:smooth;scroll-padding-top:84px}body{margin:0;background:var(--paper);color:var(--ink);font:15px/1.7 var(--sans);-webkit-font-smoothing:antialiased}button,input,select{font:inherit}button{cursor:pointer;color:inherit}a{color:inherit;text-decoration:none}button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,summary:focus-visible,[tabindex]:focus-visible{outline:3px solid var(--blue);outline-offset:4px}::selection{background:#dce5ff}h1,h2,h3,h4,p{margin:0}h2{font:600 clamp(26px,3vw,38px)/1.35 var(--serif);letter-spacing:-1px}h3{font-size:22px;line-height:1.45}p{color:var(--muted)}.wrap{width:min(1248px,calc(100% - 96px));margin:auto}.blue{color:var(--blue)}.eyebrow{font-size:11px;letter-spacing:2px;font-weight:650;line-height:1.5;display:block}.micro{font-size:12px;line-height:1.7}.text-link{padding:0;border:0;background:none;font-size:13px;font-weight:600;display:inline-flex;align-items:center;gap:12px;color:var(--ink)}.text-link:hover{color:var(--blue)}.button{display:inline-flex;justify-content:center;align-items:center;gap:25px;padding:13px 21px;border:1px solid transparent;border-radius:4px;font-size:13px;font-weight:600;line-height:1.5}.primary{background:var(--blue);color:white}.primary:hover{background:#183fb1}.secondary{border-color:var(--line);background:var(--white)}.secondary:hover{border-color:var(--ink)}.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}.skip-link{position:fixed;top:-70px;left:20px;z-index:100;background:var(--blue);color:white;padding:12px}.skip-link:focus{top:10px}
+/* Masthead and research desk */
+.masthead{height:112px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--line)}.brand{display:flex;gap:13px;align-items:center;font-size:16px;font-weight:750;letter-spacing:2px;line-height:1.3}.brand-mark{display:grid;place-items:center;background:var(--blue);color:white;width:39px;height:43px;font:italic 34px/1 Georgia,serif;letter-spacing:-4px;padding-right:6px}.brand-cn{display:block;font-size:10px;font-weight:400;letter-spacing:2px;margin-top:5px;color:var(--muted)}.edition{display:flex;align-items:center;gap:10px;font-size:10px;letter-spacing:1.5px;line-height:1.8}.edition #editionDate{display:block;color:var(--muted);letter-spacing:1px}.pulse{height:6px;width:6px;border-radius:50%;background:var(--green)}.print-button{border:1px solid var(--line);background:transparent;padding:8px 13px;border-radius:3px;font-size:12px}.print-button span{margin-left:16px}.print-button:hover{border-color:var(--blue);color:var(--blue)}
+.hero{padding:70px 0 60px;display:grid;grid-template-columns:1.2fr 1fr;gap:60px;align-items:center}.hero .eyebrow{display:flex;align-items:center;gap:12px;color:var(--blue)}.tiny-line{display:inline-block;width:25px;height:1px;background:var(--blue)}.hero h1{font:650 clamp(70px,7.5vw,108px)/1.12 var(--serif);letter-spacing:-5px;margin:22px 0}.hero-question{font-size:22px;line-height:1.6;color:var(--ink);font-weight:500}.mobile-break{display:none}.hero-deck{max-width:440px;margin-top:17px;font-size:14px;line-height:1.9}.hero-actions{display:flex;gap:28px;align-items:center;margin-top:28px}.hero-visual{height:485px;position:relative;background:#e8ece7;border-radius:2px;overflow:hidden;background-image:linear-gradient(#dce1db 1px,transparent 1px),linear-gradient(90deg,#dce1db 1px,transparent 1px);background-size:28px 28px}.visual-label{position:absolute;top:20px;left:22px;right:22px;display:flex;justify-content:space-between;font-size:10px;letter-spacing:1.5px;color:#68746e}.research-paper{width:74%;position:absolute;top:76px;left:13%;background:var(--white);padding:26px 27px 18px;transform:rotate(-4deg);border:1px solid #d1d6cc}.paper-back{position:absolute;width:73%;height:337px;left:14%;top:88px;transform:rotate(4deg);border:1px solid #c4cbbb;background:#dce2d4}.paper-top{font-size:9px;color:var(--muted);letter-spacing:1.3px;display:flex;justify-content:space-between;align-items:center}.paper-dot{width:7px;height:7px;background:var(--blue);border-radius:50%}.paper-title{font:600 29px/1.45 var(--serif);letter-spacing:-.5px;margin:16px 0}.paper-rule{border-top:1px solid var(--line);margin-bottom:17px}.paper-row{display:flex;gap:15px;align-items:center;font-size:13px;margin:12px 0}.circled{width:24px;height:24px;border:1px solid #c3c9c1;border-radius:50%;font:10px/23px var(--sans);text-align:center;color:var(--blue)}.paper-english{display:block;font-size:9px;color:#748077;letter-spacing:.4px}.paper-footer{display:flex;justify-content:space-between;border-top:1px solid var(--line);padding-top:11px;margin-top:17px;font-size:9px;color:var(--muted)}.visual-stamp{position:absolute;bottom:53px;right:19px;background:var(--blue);color:white;transform:rotate(8deg);padding:13px 17px;font-size:11px;line-height:1.9;letter-spacing:1px}.visual-stamp strong{font-size:15px;font-weight:500}.visual-caption{position:absolute;left:22px;bottom:15px;color:#667468;font-size:9px;letter-spacing:.5px}
+.research-meta{display:grid;grid-template-columns:repeat(3,1fr) 2fr;gap:20px;border-top:1px solid var(--line);padding:23px 0 25px}.meta-item{display:flex;align-items:center;gap:12px;border-right:1px solid var(--line)}.meta-item strong{font:500 32px/1.2 Georgia,serif}.meta-item span{font-size:11px;line-height:1.7;color:var(--muted)}.meta-method{font-size:12px;align-self:center;text-align:right}.meta-method b{display:block;font-weight:500}.meta-method span{color:var(--muted);font-size:11px}.section-nav{position:sticky;top:0;z-index:20;border-top:1px solid var(--line);border-bottom:1px solid var(--line);background:rgba(247,246,241,.97)}.nav-inner{display:flex;align-items:center;justify-content:space-between;overflow:auto;gap:25px;scrollbar-width:thin}.nav-inner a{font-size:11px;padding:18px 0;white-space:nowrap;border-bottom:2px solid transparent}.nav-inner a:hover,.nav-inner a.active{color:var(--blue);border-color:var(--blue)}
+/* Findings */
+.section{padding:76px 0}.section-heading{display:flex;align-items:flex-end;justify-content:space-between;gap:32px;margin-bottom:34px}.section-heading .eyebrow{color:var(--blue);margin-bottom:14px}.section-aside{font-size:12px;text-align:right;line-height:1.8;flex-shrink:0}.small-label{font-size:11px;color:var(--muted);padding:6px 11px;border:1px solid var(--line);border-radius:3px}.findings{display:grid;grid-template-columns:repeat(3,1fr);gap:32px}.finding{padding-top:20px;border-top:1px solid var(--ink)}.finding-num{font:italic 23px/1 Georgia,serif;color:var(--blue);margin-bottom:20px}.finding h3{font-size:19px;line-height:1.6;margin-bottom:14px}.finding p{font-size:13px;line-height:1.95}.refs{display:inline-flex;align-items:center;flex-wrap:wrap;gap:5px;margin-top:14px}.ref-btn{font:10px/1.6 var(--sans);color:var(--blue);background:transparent;border:1px solid #cad2eb;border-radius:3px;padding:1px 6px;white-space:nowrap}.ref-btn:hover{background:var(--blue-soft);border-color:var(--blue)}
+/* Workflow map */
+.map-section{background:#eef0e9;border-block:1px solid #dce1d7}.map-layout{display:grid;grid-template-columns:270px 1fr;gap:55px}.task-brief{border-left:2px solid var(--blue);padding-left:22px}.task-brief .eyebrow{font-size:10px;color:var(--muted)}.task-brief h3{font:600 31px/1.5 var(--serif);margin:14px 0}.task-brief p{font-size:12px;line-height:1.9;margin:16px 0}.task-brief .text-link{font-size:12px}.task-brief .micro{font-size:10px}.workflow-map{overflow:auto}.map-table{width:100%;border-collapse:collapse;min-width:610px;table-layout:fixed}.map-table thead th{font-size:11px;font-weight:500;color:var(--muted);padding:0 6px 15px;text-align:left}.map-table thead th:first-child{width:130px}.map-table tbody th{font-size:13px;text-align:left;font-weight:600;padding:20px 4px;border-top:1px solid #d3d9cf}.map-table td{border-top:1px solid #d3d9cf;padding:15px 6px}.map-cell{display:flex;align-items:center;justify-content:space-between;width:100%;background:transparent;border:0;text-align:left;font-size:11px;padding:8px 0;gap:8px}.map-cell:hover{color:var(--blue)}.map-dot{display:inline-block;width:8px;height:8px;border-radius:50%;flex-shrink:0;background:var(--green)}.map-dot.conditional{background:transparent;border:2px solid var(--blue)}.map-dot.historical{border:1px dashed #907336;background:transparent;border-radius:1px}.map-dot.unconfirmed{background:transparent;border:1px solid #92998d}.map-caption{font-size:10px;margin-top:15px}.product-strip{margin-top:44px;display:grid;grid-template-columns:repeat(5,1fr);border-top:1px solid #d3d9cf;padding-top:25px;gap:22px}.product-strip h4{font-size:14px;margin:8px 0}.product-strip p{font-size:11px;line-height:1.9}.product-monogram{font:500 13px/30px var(--sans);width:30px;height:30px;border:1px solid #bbc5b9;border-radius:50%;text-align:center;color:var(--green)}
+/* Comparison */
+.compare-controls{display:flex;flex-direction:column;gap:22px;margin-bottom:20px}fieldset{margin:0;padding:0;border:0}#productFilters{display:flex;flex-wrap:wrap;align-items:center;gap:10px}#productFilters legend{float:left;margin-right:20px;font-size:12px;color:var(--muted);padding:8px 0}.product-filter{display:inline-flex;gap:9px;align-items:center;background:var(--white);border:1px solid var(--line);padding:7px 12px;border-radius:4px;font-size:12px;cursor:pointer}.product-filter input{accent-color:var(--blue);width:14px;height:14px;margin:0}.product-filter:has(input:checked){border-color:#bccaf3;background:var(--blue-soft)}.group-filters{display:flex;flex-wrap:wrap;gap:7px}.group-button{padding:7px 14px;border:0;background:transparent;border-radius:3px;font-size:12px;color:var(--muted)}.group-button[aria-pressed=true]{background:var(--ink);color:white}.group-button:hover{background:#e2e5dd;color:var(--ink)}.legend{display:flex;gap:20px;flex-wrap:wrap;margin-bottom:14px;font-size:10px;color:var(--muted)}.legend span{display:inline-flex;align-items:center;gap:6px}.table-scroll{overflow:auto;border:1px solid var(--line);border-radius:4px;background:var(--white);scrollbar-width:thin}#comparisonTable{border-collapse:separate;border-spacing:0;width:100%;min-width:1060px;table-layout:fixed}#comparisonTable th,#comparisonTable td{border-right:1px solid var(--line);border-bottom:1px solid var(--line);vertical-align:top}#comparisonTable tr>*:last-child{border-right:0}#comparisonTable tbody tr:last-child>*{border-bottom:0}#comparisonTable thead th{background:#edf0e9;padding:20px 15px;text-align:left;font-size:15px}#comparisonTable thead th:first-child{width:150px;position:sticky;left:0;z-index:3;font-size:12px}#comparisonTable thead small{display:block;font-size:10px;color:var(--muted);font-weight:400;margin-top:6px}#comparisonTable tbody th{padding:20px 14px;background:#f3f4ed;position:sticky;left:0;z-index:2;text-align:left;font-size:12px;font-weight:550}#comparisonTable tbody th small{display:block;font-size:10px;font-weight:400;color:var(--muted);margin-top:9px;line-height:1.7}#comparisonTable td{padding:0}.cell-button{width:100%;min-height:122px;display:flex;flex-direction:column;align-items:flex-start;text-align:left;padding:18px 15px;background:transparent;border:0;gap:9px}.cell-button:hover{background:#f0f3fe}.cell-button strong{font-weight:500;font-size:12px;line-height:1.7}.cell-status{display:flex;align-items:center;gap:6px;font-size:10px;color:var(--muted)}.cell-reference{font-size:9px;color:#707b73;margin-top:auto}.empty-cell{padding:40px!important;text-align:center}.table-footer{display:flex;justify-content:space-between;margin-top:14px;font-size:11px;color:var(--muted)}.table-footer .text-link{font-size:11px}
+/* Scenario selector */
+.scenario-section{background:var(--ink);color:#fff}.scenario-section h2{color:var(--paper)}.scenario-section .eyebrow{color:#a6b9ff}.scenario-section p{color:#bdc6c3}.scenario-layout{display:grid;grid-template-columns:250px 1fr;gap:66px}.scenario-tabs{display:flex;flex-direction:column}.scenario-tab{background:none;border:0;border-bottom:1px solid #48524f;color:#afb9b4;padding:18px 5px;text-align:left;font-size:14px;display:flex;align-items:center;gap:15px}.scenario-tab span:first-child{font:italic 13px Georgia,serif}.scenario-tab span:last-child{margin-left:auto}.scenario-tab[aria-selected=true]{color:#fff;border-color:#b9caff}.scenario-tab:hover{color:#fff}#scenarioPanel{padding:12px 0;max-width:760px}#scenarioPanel h3{font:500 29px/1.5 var(--serif);margin-bottom:17px}.pick-tags{display:flex;gap:8px;flex-wrap:wrap;margin:16px 0 18px}.pick-tag{padding:4px 11px;border:1px solid #6b7a83;color:#e2e9ff;border-radius:3px;font-size:12px}#scenarioPanel p{font-size:13px;line-height:1.95}.scenario-boundary{border-left:2px solid #8193b7;padding-left:16px;margin-top:20px;font-size:11px!important;color:#aeb8b4!important}.scenario-section .ref-btn{color:#bbcaff;border-color:#576886}.scenario-section .ref-btn:hover{background:#334466}
+/* Price charts and calculator */
+.price-toolbar{display:flex;justify-content:space-between;align-items:center;gap:24px;margin-bottom:30px}.price-toolbar p{max-width:660px;font-size:12px;line-height:1.85}.price-toolbar strong{font-weight:500;color:var(--ink)}.segmented{display:flex;padding:4px;background:#e7eae2;border-radius:5px;flex-shrink:0}.segmented button{padding:8px 13px;background:none;border:0;font-size:11px;border-radius:3px;color:var(--muted)}.segmented button[aria-pressed=true]{background:var(--white);color:var(--ink)}.price-layout{display:grid;grid-template-columns:1fr 275px;gap:46px}.price-group+.price-group{margin-top:30px}.price-group-head{display:flex;justify-content:space-between;align-items:center;font-size:11px;margin-bottom:18px;border-bottom:1px solid var(--line);padding-bottom:10px}.price-group-head strong{font-size:12px;letter-spacing:1px}.price-group-head span{color:var(--muted)}.price-row{display:grid;grid-template-columns:145px 1fr 100px;align-items:center;gap:18px;min-height:50px}.price-name{font-size:12px}.price-name small{display:block;font-size:10px;color:var(--muted)}.bar-track{height:12px;background:#e6e9e0;position:relative;border-radius:2px}.bar-fill{display:block;height:100%;background:var(--blue);border-radius:2px}.price-group.cny .bar-fill{background:var(--green)}.price-amount{text-align:right;font-size:17px;font-variant-numeric:tabular-nums}.price-amount small{font-size:9px;color:var(--muted);display:block}.price-absent{grid-column:2/4;font-size:11px;color:var(--muted);border-bottom:1px dashed var(--line);padding-bottom:8px}.chart-axis{display:flex;justify-content:space-between;font-size:9px;color:var(--muted);margin:5px 100px 8px 163px}.price-note{padding:24px;background:#eceee6;border-left:2px solid #adb6a5;align-self:start}.price-note h4{font-size:13px;margin-bottom:12px}.price-note p{font-size:12px;line-height:1.9;margin-bottom:10px}.price-note .micro{font-size:10px}.plan-details{margin-top:26px;border-block:1px solid var(--line)}.plan-details summary{display:flex;justify-content:space-between;padding:18px 0;cursor:pointer;font-size:12px;list-style:none}.plan-details summary::-webkit-details-marker{display:none}.plan-details[open] summary span{transform:rotate(45deg)}.plan-details .table-scroll{margin-bottom:20px}#planTable{width:100%;border-collapse:collapse;min-width:800px;font-size:11px}#planTable th,#planTable td{padding:13px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}#planTable th{background:#ecefe8;font-weight:600}#planTable td small{display:block;color:var(--muted);max-width:230px}#planTable .refs{margin-top:0}.calculator{display:grid;grid-template-columns:1.1fr 1fr 1fr;gap:35px;padding:30px;background:var(--blue-soft);margin-top:32px;border:1px solid #d7dff5;border-radius:4px}.calculator .eyebrow{font-size:10px;letter-spacing:1px;color:var(--blue)}.calculator h3{font-size:20px;margin:11px 0}.calculator p{font-size:11px;line-height:1.8}.calc-inputs label{font-size:11px;display:block;margin-bottom:8px}.calc-inputs select{width:100%;background:var(--white);border:1px solid #bec9e8;border-radius:3px;padding:7px 10px;font-size:12px;margin-bottom:18px}.calc-inputs input{width:100%;accent-color:var(--blue)}.range-labels{display:flex;justify-content:space-between;font-size:9px;color:var(--muted)}.calc-result{border-left:1px solid #c6d0ea;padding-left:25px;font-variant-numeric:tabular-nums}.calc-line{display:flex;justify-content:space-between;gap:10px;font-size:11px;padding:6px 0;color:var(--muted)}.calc-line strong{font-size:19px;font-weight:500;color:var(--ink)}.calc-result .calc-verdict{font-size:12px;color:var(--blue);margin-top:12px}.calc-result .refs{margin-top:8px}
+/* Audit trail, sources and dialogue */
+.audit-section{border-top:1px solid var(--line);background:#f0f1eb}.audit-list{border-top:1px solid var(--ink)}.audit-item{display:grid;grid-template-columns:48px 1fr 1fr;gap:25px;border-bottom:1px solid var(--line);padding:30px 0}.audit-number{font:italic 23px Georgia,serif;color:var(--blue)}.audit-item h3{font-size:17px;margin-bottom:12px;max-width:430px}.audit-item p{font-size:12px;line-height:1.9}.audit-decision{padding-left:25px;border-left:1px solid var(--line)}.audit-decision strong{font-size:10px;letter-spacing:1px;color:var(--blue)}.audit-decision p{margin:9px 0}.audit-impact{font-size:11px!important}.opportunity-header{margin-top:70px;margin-bottom:25px}.opportunity-header .eyebrow{color:var(--blue);margin-bottom:13px}.opportunity-header p{font-size:12px;margin-top:15px}.opportunities{display:grid;grid-template-columns:1.2fr 1fr;gap:25px}.opportunity{border:1px solid #cfd6c9;background:var(--white);padding:28px}.priority{display:inline-block;font:11px/1.5 var(--sans);color:var(--blue);padding:3px 7px;border:1px solid #c3ceee;margin-bottom:16px}.opportunity h3{font-size:20px;line-height:1.6}.opportunity dl{margin:20px 0 0}.opportunity dt{font-size:11px;font-weight:600;margin:14px 0 5px}.opportunity dd{font-size:12px;line-height:1.9;color:var(--muted);margin:0}.opportunity .micro{margin-top:18px;border-top:1px solid var(--line);padding-top:13px;font-size:10px}.method-block{display:grid;grid-template-columns:1fr 1fr;gap:60px;margin-top:65px;border-top:1px solid var(--line);padding-top:38px}.method-block h3{font:500 26px var(--serif);margin:12px 0 18px}.method-block p{font-size:12px;line-height:1.95;margin:10px 0}.method-block h4{font-size:13px;margin:7px 0 15px}.method-block ul{padding-left:18px;color:var(--muted);font-size:12px}.method-block li{margin:8px 0}.method-block .micro{font-size:11px}.method-actions{display:flex;gap:18px;align-items:center;flex-wrap:wrap;margin-top:21px}.method-actions .button,.method-actions .text-link{font-size:11px}.source-heading{display:flex;align-items:center;justify-content:space-between;gap:20px;margin:55px 0 24px}.source-heading h3{font-size:21px}.source-heading p{font-size:11px;margin-top:8px}.source-search input{border:1px solid #c9d0c2;background:var(--white);padding:10px 14px;width:265px;border-radius:3px;font-size:12px}.source-list{display:grid;grid-template-columns:1fr 1fr;gap:10px 25px;align-items:start}.source-item{border-bottom:1px solid #d1d8cb;padding-bottom:10px}.source-item summary{cursor:pointer;list-style:none;display:flex;gap:12px;align-items:flex-start;padding:9px 0}.source-item summary::-webkit-details-marker{display:none}.source-id{font:10px/1.5 var(--sans);color:var(--blue);padding-top:3px;min-width:28px}.source-title{font-size:12px;flex:1}.source-kind{font-size:9px;color:var(--muted);display:block;margin-top:3px}.source-toggle{font-size:17px;font-weight:300}.source-item[open] .source-toggle{transform:rotate(45deg)}.source-body{padding:9px 0 12px 40px}.source-body p{font-size:11px;line-height:1.85;overflow-wrap:anywhere}.source-body .source-url{display:block;font-size:11px;color:var(--blue);overflow-wrap:anywhere;margin:13px 0}.source-body blockquote{margin:12px 0;border-left:2px solid #c0cab4;padding-left:13px;font-size:11px;color:#596652;line-height:1.85;overflow-wrap:anywhere}.source-body .quote-id{display:block;font:9px/1.5 var(--sans);color:var(--muted);margin-bottom:5px}.footer{display:flex;align-items:center;justify-content:space-between;gap:25px;padding:40px 0}.brand-word{font-size:20px;font-weight:750;letter-spacing:-1px}.footer p{font-size:11px;margin-top:8px}.footer>div:nth-child(2){font-size:10px;line-height:2;color:var(--muted)}.footer .text-link{font-size:11px}
+dialog{border:1px solid #ccd3c6;border-radius:6px;padding:0;width:min(720px,calc(100% - 32px));max-height:85dvh;background:var(--white);color:var(--ink)}dialog::backdrop{background:rgba(20,32,34,.58)}.dialog-header{position:sticky;top:0;display:flex;align-items:center;justify-content:space-between;background:var(--white);padding:16px 25px;border-bottom:1px solid var(--line);z-index:2}.dialog-header .eyebrow{font-size:10px;color:var(--blue)}#closeDialog{font:24px/1 var(--sans);border:0;background:none;padding:3px 7px}.dialog-content{padding:25px 30px 35px}.dialog-content h2{font:600 25px/1.5 var(--serif);letter-spacing:0;margin-bottom:15px}.dialog-content>p{font-size:13px;line-height:1.9;margin:12px 0}.dialog-scope{font-size:11px!important;background:#edf0e7;padding:12px 15px;border-radius:3px}.dialog-evidence{border-top:1px solid var(--line);padding-top:16px;margin-top:20px}.dialog-evidence h3{font-size:13px}.dialog-evidence p{font-size:10px;margin-top:6px}.dialog-evidence blockquote{margin:12px 0;font-size:12px;line-height:1.9;border-left:2px solid var(--blue);padding-left:15px;overflow-wrap:anywhere;white-space:pre-wrap;color:#516057}.dialog-evidence a{font-size:11px;color:var(--blue);overflow-wrap:anywhere}.task-text{white-space:pre-wrap;font:13px/1.9 var(--sans);background:#f0f2eb;padding:18px;border:1px solid var(--line)}.noscript{position:fixed;inset:25% 10% auto;padding:30px;background:white;border:2px solid var(--blue);z-index:50}
+@media(min-width:1450px){.hero{gap:90px}.hero-visual{height:500px}.research-paper{top:76px;padding:30px}.paper-title{font-size:33px}.paper-back{height:360px}}
+@media(max-width:1100px){.wrap{width:calc(100% - 56px)}.hero{gap:32px}.hero h1{font-size:82px}.hero-visual{height:455px}.paper-title{font-size:25px}.research-paper{width:80%;left:10%;padding:23px}.visual-stamp{right:10px}.map-layout{grid-template-columns:220px 1fr;gap:25px}.map-table{min-width:570px}.scenario-layout{gap:35px}.price-layout{gap:25px;grid-template-columns:1fr 230px}.price-row{grid-template-columns:120px 1fr 85px;gap:12px}.chart-axis{margin-left:132px;margin-right:85px}.calculator{gap:23px;padding:25px}.findings{gap:24px}.section-heading{gap:20px}.section-aside{font-size:11px}.source-list{gap:10px 20px}}
+@media(max-width:800px){.wrap{width:calc(100% - 40px)}.masthead{height:85px}.edition{display:none}.hero{padding:44px 0;gap:25px;grid-template-columns:1fr .8fr}.hero h1{font-size:66px;letter-spacing:-3px}.hero-question{font-size:18px}.hero-deck{font-size:12px}.hero-actions{gap:15px;flex-wrap:wrap}.hero-actions .text-link{font-size:11px}.hero-visual{height:382px}.research-paper{padding:17px;top:64px}.paper-title{font-size:20px}.paper-row{font-size:11px;gap:8px;margin:10px 0}.paper-english{font-size:8px}.visual-stamp{padding:9px 10px;bottom:37px;font-size:9px}.visual-stamp strong{font-size:11px}.visual-label{font-size:8px;left:15px;right:15px}.paper-back{height:272px;top:78px}.visual-caption{left:15px;font-size:7px}.research-meta{grid-template-columns:repeat(3,1fr);gap:15px}.meta-method{grid-column:1/-1;text-align:left;border-top:1px solid var(--line);padding-top:13px;display:flex;justify-content:space-between;gap:15px}.meta-item:nth-child(3){border:0}.section{padding:52px 0}.section-heading{align-items:flex-start}.section-aside{max-width:190px}.findings{gap:20px}.finding h3{font-size:16px}.finding p{font-size:12px}.map-layout{grid-template-columns:1fr}.task-brief{display:grid;grid-template-columns:1fr 1.1fr;gap:0 28px}.task-brief>.eyebrow{grid-column:1/-1}.task-brief h3{font-size:26px}.task-brief h3 br{display:none}.task-brief p{margin-top:12px}.task-brief .micro{grid-column:2}.task-brief .text-link{align-self:start}.workflow-map{margin-top:16px}.product-strip{grid-template-columns:repeat(3,1fr)}.scenario-layout{grid-template-columns:1fr;gap:22px}.scenario-tabs{flex-direction:row;gap:18px;overflow:auto}.scenario-tab{white-space:nowrap;gap:10px;font-size:12px;flex-shrink:0}.scenario-tab span:last-child{display:none}#scenarioPanel h3{font-size:25px}.price-toolbar{flex-direction:column;align-items:flex-start}.price-layout{grid-template-columns:1fr}.price-note{display:grid;grid-template-columns:1fr 2fr;gap:10px 24px;padding:20px}.price-note .refs{margin-top:0}.price-note .micro{grid-column:2}.calculator{grid-template-columns:1fr 1fr}.calculator>div:first-child{grid-column:1/-1}.calculator h3{margin:8px 0}.audit-item{grid-template-columns:30px 1fr;gap:18px}.audit-decision{grid-column:2;padding-left:0;border-left:0}.audit-item h3{max-width:none}.opportunities{grid-template-columns:1fr}.method-block{gap:32px}.source-list{grid-template-columns:1fr}.source-heading{margin-top:38px}.source-search input{width:230px}.footer>div:nth-child(2){max-width:240px}.small-label{font-size:9px}}
+@media(max-width:560px){.wrap{width:calc(100% - 36px)}.masthead{height:76px}.brand{font-size:13px;gap:10px;letter-spacing:1.6px}.brand-mark{width:33px;height:37px;font-size:29px}.brand-cn{font-size:8px;letter-spacing:1px}.print-button{font-size:10px;padding:6px 8px}.print-button span{margin-left:8px}.hero{grid-template-columns:1fr;padding:34px 0 28px;gap:30px}.hero h1{font-size:80px;margin:21px 0 20px}.hero-question{font-size:20px}.hero-deck{font-size:13px;max-width:100%;margin-top:13px}.hero-actions{margin-top:22px;gap:22px}.hero-visual{height:330px}.research-paper{width:66%;left:17%;top:44px;padding:16px 20px}.paper-title{font-size:24px;margin:12px 0}.paper-row{margin:8px 0}.paper-english{display:none}.paper-footer{font-size:8px;margin-top:13px}.paper-back{width:66%;height:250px;left:18%;top:50px}.visual-stamp{bottom:40px;right:18px;padding:10px 13px}.visual-label{top:14px}.visual-caption{font-size:8px;bottom:11px}.research-meta{gap:12px;padding:18px 0}.meta-item{gap:7px}.meta-item strong{font-size:27px}.meta-item span{font-size:9px}.meta-method{display:block;font-size:11px;padding-top:11px}.meta-method span{font-size:10px}.nav-inner{gap:23px}.nav-inner a{padding:14px 0;font-size:10px}.section{padding:42px 0}.section-heading{flex-direction:column;gap:15px;margin-bottom:25px}.section-heading .eyebrow{font-size:10px;margin-bottom:12px}.section-aside{text-align:left;max-width:none;font-size:11px}.section-aside br{display:none}h2{font-size:28px}.findings{grid-template-columns:1fr;gap:26px}.finding{display:grid;grid-template-columns:33px 1fr;gap:5px 12px;padding-top:17px}.finding-num{margin:4px 0;grid-row:1/3}.finding h3{font-size:18px;margin-bottom:7px}.finding p,.finding .refs{grid-column:2}.finding p{font-size:12px}.finding .refs{margin-top:8px}.task-brief{display:block}.task-brief h3{font-size:27px;margin:12px 0}.task-brief p{font-size:12px}.task-brief .micro{margin-bottom:0}.workflow-map{margin-top:25px}.product-strip{grid-template-columns:1fr 1fr;gap:20px;margin-top:28px}.product-strip p{font-size:11px}.product-strip h4{font-size:13px}.map-caption{font-size:9px}#productFilters legend{float:none;display:block;margin-bottom:8px;padding:0}#productFilters{gap:8px}.product-filter{padding:7px 9px;font-size:11px}.group-filters{gap:3px}.group-button{padding:7px 10px;font-size:11px}.legend{gap:10px 15px;font-size:9px}.table-footer{gap:15px;font-size:10px}.table-footer .text-link{font-size:10px;white-space:nowrap}#comparisonTable{min-width:1010px}#comparisonTable thead th:first-child{width:120px}#comparisonTable tbody th{padding:17px 11px}.scenario-tabs{gap:15px}.scenario-tab{font-size:11px;padding:13px 0}#scenarioPanel h3{font-size:24px}#scenarioPanel p{font-size:12px}.price-toolbar{gap:16px}.price-toolbar p{font-size:11px}.price-group-head span{font-size:10px}.price-row{grid-template-columns:99px 1fr 70px;gap:10px}.price-name{font-size:11px}.price-name small{font-size:9px}.price-amount{font-size:16px}.chart-axis{margin-left:109px;margin-right:70px}.price-note{display:block}.price-note p{font-size:11px}.price-note .micro{font-size:10px}.calculator{grid-template-columns:1fr;padding:20px;gap:24px}.calculator>div:first-child{grid-column:auto}.calc-result{border-left:0;padding-left:0;border-top:1px solid #c6d0ea;padding-top:13px}.calculator h3{font-size:19px}.audit-item{padding:23px 0;gap:12px;grid-template-columns:24px 1fr}.audit-number{font-size:18px}.audit-item h3{font-size:16px}.audit-item p{font-size:11px}.opportunity-header{margin-top:44px}.opportunity{padding:23px}.opportunity h3{font-size:18px}.opportunity dd{font-size:11px}.method-block{grid-template-columns:1fr;gap:20px;margin-top:42px;padding-top:28px}.source-heading{display:block}.source-search input{width:100%;margin-top:18px}.source-body{padding-left:0}.source-title{font-size:11px}.footer{display:grid;grid-template-columns:1fr auto;gap:22px;padding:30px 0}.footer>div:nth-child(2){grid-column:1;grid-row:2}.footer>a{grid-column:2;grid-row:1}.dialog-content{padding:20px}.dialog-header{padding:12px 20px}.dialog-content h2{font-size:22px}.dialog-content>p{font-size:12px}.dialog-evidence blockquote{font-size:11px}}
+@media(max-width:560px){.mobile-break{display:block}.research-paper{width:76%;left:12%;padding:16px 20px}.paper-title{font-size:22px}.paper-back{width:76%;left:13%}#comparisonTable{min-width:calc(100px + var(--columns,5)*155px)!important}#comparisonTable thead th:first-child{width:100px}#comparisonTable tbody th{padding:16px 9px}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{transition:none!important;animation:none!important}}
+@media print{@page{size:A4 landscape;margin:12mm}html{scroll-behavior:auto}body{font-size:11px;background:white;color:#18211d}.wrap{width:100%}.masthead{height:60px}.hero{padding:25px 0;grid-template-columns:1.2fr 1fr}.hero h1{font-size:65px}.hero-visual{height:345px}.research-paper{top:40px}.hero-actions,.print-button,.section-nav,.compare-controls,.table-footer button,.source-search,.method-actions,.scenario-tabs,.calculator,.price-toolbar .segmented,.skip-link,#taskButton{display:none!important}.section{padding:30px 0}.section-heading{margin-bottom:20px}.section-heading h2{font-size:26px}.section-aside{font-size:10px}.findings{gap:22px}.finding h3{font-size:15px}.finding p{font-size:11px}.map-layout{grid-template-columns:190px 1fr;gap:25px}.task-brief h3{font-size:24px}.map-table{min-width:0}.map-table td,.map-table tbody th{padding:10px 5px}.product-strip{gap:15px}.table-scroll{overflow:visible;border-radius:0}#comparisonTable{min-width:0!important;table-layout:fixed}#comparisonTable thead th:first-child{width:95px}#comparisonTable th{position:static!important}#comparisonTable thead th{font-size:12px;padding:10px}#comparisonTable tbody th{font-size:11px;padding:10px}.cell-button{min-height:100px;padding:10px;gap:7px}.cell-button strong{font-size:10px}.cell-status{font-size:8px}.cell-reference{font-size:8px}thead{display:table-header-group}tr,.finding,.audit-item,.opportunity,.source-item,.price-group{break-inside:avoid}.scenario-section{background:#eef0e9;color:#18211d}.scenario-section h2,.scenario-section p,.scenario-section .eyebrow{color:#18211d}.scenario-layout{display:block}#scenarioPanel h3{font-size:20px}.pick-tag{color:var(--ink);border-color:var(--line)}.scenario-boundary{color:var(--muted)!important}.print-scenario{margin-bottom:20px;break-inside:avoid;border-bottom:1px solid var(--line);padding-bottom:15px}.scenario-section .ref-btn{color:var(--blue);border-color:#bccaf3}.price-toolbar p{max-width:none}.price-layout{grid-template-columns:1fr 260px}.source-list{grid-template-columns:1fr 1fr}.source-body blockquote{font-size:9px}.source-body p,.source-url{font-size:9px!important}.source-item summary{font-size:10px}.source-toggle{display:none}.source-body{padding-left:0}.map-section,.audit-section{background:white}.method-block{margin-top:30px;gap:30px}.audit-item{padding:20px 0}.opportunity-header{margin-top:35px}.opportunity{padding:20px}.opportunity dd{font-size:11px}.footer{padding:25px 0}.hero-visual,.bar-fill,.scenario-section{-webkit-print-color-adjust:exact;print-color-adjust:exact}dialog{display:none!important}.ref-btn{border:0;padding:0 3px;font-size:9px}.source-heading{margin-top:30px}.plan-details summary{font-size:11px}#planTable{min-width:0}#planTable th,#planTable td{padding:9px;font-size:10px}}
 
-    /* 产品 = 实体色，全页一致 */
-    --p1: #3987e5; /* 豆包 */
-    --p2: #d95926; /* 通义千问 */
-    --p3: #199e70; /* 文心一言 */
-    --p4: #c98500; /* Kimi */
-    --p5: #d55181; /* Claude */
-  }
-  *{box-sizing:border-box;margin:0;padding:0}
-  body{
-    background:var(--plane);
-    color:var(--text-primary);
-    font-family:system-ui,-apple-system,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;
-    line-height:1.7;
-    -webkit-font-smoothing:antialiased;
-  }
-  .wrap{max-width:1200px;margin:0 auto;padding:0 24px 96px}
-
-  /* ---------- Header ---------- */
-  header{
-    padding:72px 0 40px;
-    border-bottom:1px solid var(--border);
-    margin-bottom:56px;
-  }
-  .eyebrow{
-    font-size:12px;letter-spacing:.14em;text-transform:uppercase;
-    color:var(--muted);margin-bottom:16px;
-  }
-  h1{font-size:clamp(28px,4vw,44px);line-height:1.25;font-weight:700;letter-spacing:-.01em}
-  h1 .sep{color:var(--muted);font-weight:300}
-  .lede{margin-top:20px;font-size:16px;color:var(--text-secondary);max-width:760px}
-
-  .meta-row{display:flex;flex-wrap:wrap;gap:10px;margin-top:28px}
-  .chip{
-    font-size:12.5px;padding:5px 12px;border-radius:999px;
-    background:var(--surface-1);border:1px solid var(--border);color:var(--text-secondary);
-  }
-
-  /* ---------- Section ---------- */
-  section{margin-bottom:72px}
-  h2{
-    font-size:13px;letter-spacing:.12em;text-transform:uppercase;
-    color:var(--muted);font-weight:600;
-    padding-bottom:12px;margin-bottom:28px;border-bottom:1px solid var(--border);
-  }
-  h3{font-size:19px;font-weight:650;margin-bottom:6px}
-  .sub{font-size:14px;color:var(--muted);margin-bottom:24px}
-
-  /* ---------- Cards ---------- */
-  .card{
-    background:var(--surface-1);
-    border:1px solid var(--border);
-    border-radius:14px;
-    padding:28px;
-  }
-  .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:20px}
-
-  /* ---------- Intro brief ---------- */
-  .brief{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
-  .brief .card{padding:24px}
-  .brief h4{font-size:14px;font-weight:650;margin-bottom:14px;display:flex;align-items:center;gap:8px}
-  .dot{width:8px;height:8px;border-radius:2px;flex:none;display:inline-block}
-  .brief p,.brief li{font-size:14px;color:var(--text-secondary)}
-  .brief ul{list-style:none}
-  .brief li{padding:5px 0;border-bottom:1px solid var(--border)}
-  .brief li:last-child{border-bottom:none}
-
-  /* ---------- Chart ---------- */
-  .chart-head{display:flex;justify-content:space-between;align-items:flex-start;gap:24px;flex-wrap:wrap;margin-bottom:24px}
-  .chart-box{position:relative;height:380px}
-  .chart-note{font-size:12.5px;color:var(--muted);margin-top:16px;padding-top:16px;border-top:1px solid var(--border)}
-
-  /* 3 列铺排 → 5 张卡片自然分成 3 + 2 两行 */
-  .radar-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
-  .radar-cell{background:var(--surface-2);border:1px solid var(--border);border-radius:12px;padding:14px}
-  .radar-title{display:flex;align-items:center;gap:7px;font-size:13px;font-weight:650;margin-bottom:4px}
-  .radar-score{font-size:11.5px;color:var(--muted);font-variant-numeric:tabular-nums}
-  .radar-box{position:relative;height:190px;margin-top:6px}
-
-  /* ---------- Table ---------- */
-  .table-scroll{overflow-x:auto;border:1px solid var(--border);border-radius:14px;background:var(--surface-1)}
-  table{border-collapse:separate;border-spacing:0;width:100%;font-size:13.5px;min-width:1060px}
-  th,td{padding:14px 16px;text-align:left;vertical-align:top;border-bottom:1px solid var(--border)}
-  thead th{
-    position:sticky;top:0;z-index:2;
-    background:var(--surface-2);
-    font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);font-weight:600;
-    white-space:nowrap;
-  }
-  thead th .pname{display:flex;align-items:center;gap:8px;color:var(--text-primary);font-size:13.5px;text-transform:none;letter-spacing:0}
-  tbody th{
-    position:sticky;left:0;z-index:1;
-    background:var(--surface-1);
-    font-weight:600;color:var(--text-secondary);font-size:12.5px;white-space:nowrap;
-    border-right:1px solid var(--border);
-  }
-  tbody tr:last-child th,tbody tr:last-child td{border-bottom:none}
-  td{color:var(--text-secondary);line-height:1.65}
-  td strong{color:var(--text-primary);font-weight:600}
-  .num{font-variant-numeric:tabular-nums}
-  /* 橙色 = 人工复核确认的数据 */
-  .flag{color:var(--review);font-size:12px}
-  .flag strong{color:inherit}
-  .flag.num{font-variant-numeric:tabular-nums;font-weight:600}
-
-  /* ---------- Opportunity ---------- */
-  .opp{display:grid;grid-template-columns:1fr;gap:16px}
-  .opp-item{
-    background:var(--surface-1);border:1px solid var(--border);border-radius:14px;
-    padding:26px 28px;display:grid;grid-template-columns:52px 1fr;gap:22px;
-  }
-  .opp-idx{
-    font-size:26px;font-weight:700;color:var(--muted);
-    font-variant-numeric:tabular-nums;line-height:1;
-  }
-  .opp-item h4{font-size:16.5px;font-weight:650;margin-bottom:10px}
-  .opp-body p{font-size:14px;color:var(--text-secondary)}
-  .opp-tags{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
-  .tag{font-size:11.5px;padding:4px 10px;border-radius:6px;background:var(--surface-2);border:1px solid var(--border);color:var(--muted)}
-  .tag.evi{color:var(--good);border-color:rgba(12,163,12,.35)}
-
-  /* ---------- Retro ---------- */
-  .retro{
-    background:var(--surface-1);border:1px solid var(--border);border-radius:14px;padding:32px;
-  }
-  .retro p{font-size:14.5px;color:var(--text-secondary);margin-bottom:14px}
-  .retro p:last-child{margin-bottom:0}
-  .retro strong{color:var(--text-primary)}
-
-  details{margin-top:22px;border-top:1px solid var(--border);padding-top:18px}
-  summary{cursor:pointer;font-size:13px;color:var(--muted);list-style:none}
-  summary::-webkit-details-marker{display:none}
-  summary::before{content:"▸ ";color:var(--muted)}
-  details[open] summary::before{content:"▾ "}
-  details table{margin-top:16px;min-width:auto;font-size:13px}
-
-  footer{
-    border-top:1px solid var(--border);padding-top:28px;
-    font-size:12.5px;color:var(--muted);
-  }
-  footer a{color:var(--text-secondary);text-decoration:none;border-bottom:1px solid var(--border)}
-  footer a:hover{color:var(--text-primary)}
-
-  @media (max-width:1080px){
-    .radar-grid{grid-template-columns:repeat(2,1fr)}
-  }
-  @media (max-width:860px){
-    .brief{grid-template-columns:1fr}
-    .grid-2{grid-template-columns:1fr}
-    .opp-item{grid-template-columns:1fr;gap:10px}
-    .wrap{padding:0 18px 64px}
-  }
-  @media (max-width:560px){
-    .radar-grid{grid-template-columns:1fr}
-  }
+@media print{.hero-visual{height:390px}.research-paper{top:35px}.hero,.research-meta,.section-heading{break-inside:avoid}.workflow-map{overflow:visible}}
+@media(max-width:360px){.hero h1{font-size:68px;letter-spacing:-3px}}
+@media(max-width:360px){.paper-title{font-size:18px}}
 </style>
 </head>
 <body>
-<div class="wrap">
-
-  <!-- ============ 1. 标题 ============ -->
-  <header>
-    <div class="eyebrow">Competitive Research · 2026 Q3</div>
-    <h1>AI 写作助手竞品横评报告<br><span class="sep">｜</span>AI 产品作品集项目</h1>
-    <p class="lede">
-      选取国内外 5 款主流 AI 写作助手，从定位、模型能力、定价、特色功能、用户口碑五个维度做量化横向对比，
-      输出可支撑产品决策的机会点。数据采集自 2026 年 9 月公开官方信息与第三方测评。
-    </p>
-    <div class="meta-row">
-      <span class="chip">5 个竞品</span>
-      <span class="chip">5 个评估维度</span>
-      <span class="chip">数据截止 2026-09</span>
-      <span class="chip">来源：官方定价页 / QuestMobile / 信通院</span>
-    </div>
+  <a class="skip-link" href="#main">跳到报告正文</a>
+  <header class="masthead wrap">
+    <a href="#" class="brand" aria-label="产品观察，回到首页"><span class="brand-mark" aria-hidden="true">f.</span><span>FIELDNOTES<span class="brand-cn">产品观察 / 独立研究</span></span></a>
+    <div class="edition"><span class="pulse" aria-hidden="true"></span><span>RESEARCH NOTE 001<span id="editionDate"></span></span></div>
+    <button class="print-button" id="printButton" type="button">打印 / PDF <span aria-hidden="true">↗</span></button>
   </header>
-
-  <!-- ============ 2. 项目简介 ============ -->
-  <section>
-    <h2>01 · 项目简介</h2>
-    <div class="brief">
-      <div class="card">
-        <h4><span class="dot" style="background:var(--p1)"></span>调研目标</h4>
-        <ul>
-          <li>厘清 5 款产品的能力与价格边界</li>
-          <li>定位尚未被满足的写作场景缺口</li>
-          <li>为自研写作助手的产品定义提供依据</li>
-          <li>验证 AI 辅助产品调研的完整流程</li>
-        </ul>
+  <main id="main">
+    <section class="hero wrap" aria-labelledby="heroTitle">
+      <div class="hero-copy">
+        <div class="eyebrow"><span class="tiny-line"></span> AI 研究型写作助手横评</div>
+        <h1 id="heroTitle">从搜索<br>到<span class="blue">成稿。</span></h1>
+        <p class="hero-question">5 款 AI 助手，<br class="mobile-break">谁适合你的研究工作流？</p>
+        <p class="hero-deck">一份行业报告，要经历找资料、查依据、反复修改和最终交付。沿着这条路径，看清工具之间真正影响选择的差异。</p>
+        <div class="hero-actions"><a class="button primary" href="#compare">开始对比 <span aria-hidden="true">↗</span></a><a class="text-link" href="#scenarios">按我的任务选工具 <span aria-hidden="true">→</span></a></div>
       </div>
-      <div class="card">
-        <h4><span class="dot" style="background:var(--p3)"></span>竞品名单</h4>
-        <ul>
-          <li><strong>豆包</strong>｜字节跳动 · 3.82 亿 MAU</li>
-          <li><strong>通义千问</strong>｜阿里巴巴 · 1.67 亿 MAU</li>
-          <li><strong>文心一言</strong>｜百度 · 独立 App &lt;500 万</li>
-          <li><strong>Kimi</strong>｜月之暗面 · 长文本 / Agent</li>
-          <li><strong>Claude</strong>｜Anthropic · 海外专业向</li>
-        </ul>
-      </div>
-      <div class="card">
-        <h4><span class="dot" style="background:var(--p5)"></span>评估维度</h4>
-        <ul>
-          <li><strong>D1</strong> 核心定位 &amp; 目标用户</li>
-          <li><strong>D2</strong> 模型能力：上下文 / 长文本 / 多模态</li>
-          <li><strong>D3</strong> 定价策略：免费额度 / 付费套餐</li>
-          <li><strong>D4</strong> 特色功能：模板 / 上传 / 联网 / Agent</li>
-          <li><strong>D5</strong> 短板与用户吐槽点</li>
-        </ul>
-      </div>
-    </div>
-  </section>
-
-  <!-- ============ 3. 可视化图表 ============ -->
-  <section>
-    <h2>02 · 数据可视化</h2>
-
-    <!-- 柱状图 -->
-    <div class="card" style="margin-bottom:20px">
-      <div class="chart-head">
-        <div>
-          <h3>免费可用上下文窗口大小对比</h3>
-          <p class="sub">单位：千 token（K）。取各产品<strong>免费档位</strong>可调用的最大上下文，非付费/API 上限。</p>
+      <div class="hero-visual" aria-label="研究任务示意：从问题到证据，再到可审阅报告">
+        <div class="visual-label"><span>THE RESEARCH DESK</span><span>01 — 05</span></div>
+        <div class="paper-back" aria-hidden="true"></div>
+        <div class="research-paper">
+          <div class="paper-top"><span>RESEARCH BRIEF</span><span class="paper-dot"></span></div>
+          <div class="paper-title">一份能被<br>继续使用的报告。</div>
+          <div class="paper-rule"></div>
+          <div class="paper-row"><span class="circled">01</span><span>问题清楚<span class="paper-english">A focused question</span></span></div>
+          <div class="paper-row"><span class="circled">02</span><span>依据可追溯<span class="paper-english">Traceable evidence</span></span></div>
+          <div class="paper-row"><span class="circled">03</span><span>结果可交付<span class="paper-english">A usable deliverable</span></span></div>
+          <div class="paper-footer"><span>从工具清单，走向工作流判断</span><span aria-hidden="true">↗</span></div>
         </div>
+        <div class="visual-stamp">先看证据<br><strong>再做选择</strong></div>
+        <span class="visual-caption">研究框架示意 · 非产品实测输出</span>
       </div>
-      <div class="chart-box" style="height:400px">
-        <canvas id="ctxChart" role="img" aria-label="五款产品免费上下文窗口柱状图：文心一言 10000K、通义千问 1000K、豆包 256K、Kimi 256K、Claude 200K"></canvas>
-      </div>
-      <p class="chart-note">
-        <strong style="color:var(--text-secondary)">读图提示：</strong>
-        文心一言的 10000K（1000 万 token）为官方宣传口径，其 API 主力模型 ERNIE 4.5 Turbo 实际仍为 128K，
-        两者相差约 78 倍，属同一厂商内的口径落差。剔除该异常值后，主流区间落在 200K–1000K。
-      </p>
-    </div>
+    </section>
+    <div class="wrap research-meta" id="researchMeta"></div>
+    <nav class="section-nav" aria-label="报告章节"><div class="wrap nav-inner"><a href="#findings">01 关键发现</a><a href="#workflow">02 能力地图</a><a href="#compare">03 产品对照</a><a href="#scenarios">04 场景选型</a><a href="#pricing">05 订阅预算</a><a href="#evidence">06 证据与方法</a></div></nav>
+    <section class="wrap section" id="findings">
+      <div class="section-heading"><div><span class="eyebrow">01 / THE TAKEAWAYS</span><h2>先读这三个发现。</h2></div><p class="section-aside">基于公开资料的产品判断<br>每个结论，都可以回到证据。</p></div>
+      <div class="findings" id="findingsList"></div>
+    </section>
+    <section class="map-section" id="workflow"><div class="wrap section">
+      <div class="section-heading"><div><span class="eyebrow">02 / FOLLOW THE WORKFLOW</span><h2>把工具放回工作流。</h2></div><span class="small-label">能力说明地图 · 不计总分</span></div>
+      <div class="map-layout"><div class="task-brief"><span class="eyebrow">共同任务</span><h3>做一份<br>有引用的<br>行业分析报告。</h3><p>先确认范围，再整合公开资料与已有文件，修改关键判断，最后交给同事继续审阅。</p><button class="text-link" id="taskButton" type="button">查看统一复测任务卡 <span aria-hidden="true">↗</span></button><p class="micro">任务卡供后续复测使用；本报告记录公开能力与条件。</p></div><div class="workflow-map"><div id="workflowMap"></div><p class="map-caption">点击任一环节查看具体能力与出处。状态表示证据类型，不表示效果高低。</p></div></div>
+      <div class="product-strip" id="productStrip"></div>
+    </div></section>
+    <section class="wrap section" id="compare">
+      <div class="section-heading"><div><span class="eyebrow">03 / SIDE BY SIDE</span><h2>具体到每一步，再比较。</h2></div><p class="section-aside">选择产品与环节<br>点开单元格查看证据及适用条件。</p></div>
+      <div class="compare-controls"><fieldset id="productFilters"><legend>选择产品</legend></fieldset><div class="group-filters" id="groupFilters" role="group" aria-label="筛选工作环节"></div></div>
+      <div class="legend" id="statusLegend"></div>
+      <p class="sr-only" id="tableHint">表格可横向滚动；点击具体能力可查看来源。未确认不代表不支持。</p>
+      <div class="table-scroll" tabindex="0" role="region" aria-label="竞品比较表，可横向滚动" aria-describedby="tableHint"><table id="comparisonTable"></table></div>
+      <div class="table-footer"><span id="comparisonCount" role="status" aria-live="polite"></span><button id="resetFilters" class="text-link" type="button">恢复全部产品与环节 ↺</button></div>
+    </section>
+    <section class="scenario-section" id="scenarios"><div class="wrap section">
+      <div class="section-heading"><div><span class="eyebrow">04 / CHOOSE FOR YOUR TASK</span><h2>你现在卡在哪一步？</h2></div><p class="section-aside">选择下一项任务<br>得到有理由、有边界的试用候选。</p></div>
+      <div class="scenario-layout"><div class="scenario-tabs" id="scenarioTabs" role="tablist" aria-label="研究写作场景"></div><div id="scenarioPanel" role="tabpanel" tabindex="0"></div></div>
+    </div></section>
+    <section class="wrap section" id="pricing">
+      <div class="section-heading"><div><span class="eyebrow">05 / THE COST OF A WORKFLOW</span><h2>先算订阅，再验证用量。</h2></div><p class="section-aside">个人方案公开报价<br>保留原币种，区分付款与折算。</p></div>
+      <div class="price-toolbar"><p>选取 Plus、Pro、Google AI Pro、Go 作为个人付费观察点，<strong>不代表各产品最低价格或同等用量</strong>。</p><div class="segmented" role="group" aria-label="价格计费口径"><button data-billing="monthly" aria-pressed="true" type="button">按月付款</button><button data-billing="annual" aria-pressed="false" type="button">年付折算 / 月</button></div></div>
+      <div class="price-layout"><div class="price-charts" id="priceCharts"></div><aside class="price-note" id="priceNote"></aside></div>
+      <details class="plan-details"><summary>查看已采集套餐的完整价格与适用口径 <span aria-hidden="true">＋</span></summary><div class="table-scroll" tabindex="0" role="region" aria-label="套餐详细价格"><table id="planTable"></table></div></details>
+      <div class="calculator"><div><span class="eyebrow">一个简单的预算实验</span><h3>短期项目，年付真的省吗？</h3><p>只计算订阅支出，不推算报告篇数。年付即使提前停用，也按一次支付全年费用计算。</p></div><div class="calc-inputs"><label for="calcPlan">选择有已知年价的套餐</label><select id="calcPlan"></select><label for="calcMonths">计划使用 <output id="monthValue" for="calcMonths">6</output> 个月</label><input id="calcMonths" type="range" min="1" max="12" value="6"><div class="range-labels"><span>1 个月</span><span>12 个月</span></div></div><div id="calcResult" class="calc-result" aria-live="polite"></div></div>
+    </section>
+    <section class="audit-section" id="evidence"><div class="wrap section">
+      <div class="section-heading"><div><span class="eyebrow">06 / SHOW YOUR WORK</span><h2>核验，怎样改变了结论。</h2></div><p class="section-aside">研究的价值，也在取舍之中。<br>保留冲突，说明判断。</p></div>
+      <div class="audit-list" id="auditList"></div>
+      <div class="opportunity-header"><span class="eyebrow">PRODUCT IMPLICATIONS</span><h2>从差异里，找到下一步。</h2><p>下面是依据研究提出的产品假设，附验证路径。</p></div>
+      <div id="opportunities" class="opportunities"></div>
+      <div class="method-block"><div><span class="eyebrow">研究方法</span><h3>一条事实，一份出处。</h3><p>以研究写作为共同任务，逐项阅读官方页面；对套餐周期、入口与地区分别记录。生成图表前核对摘录与事实的对应关系，遇到冲突写明采用口径。</p><p>产品分析由 AI 辅助整理与实现，研究取舍以本页证据链呈现。公开能力说明不等于独立效果评测。</p></div><div><h4>阅读这份报告的边界</h4><ul id="limitations"></ul><p class="micro">快照日期：<span id="snapshotDate"></span>。价格与规则可能更新，购买前应再次查看原始页面。</p><div class="method-actions"><button id="downloadData" class="button secondary" type="button">下载研究数据 ↓</button><button id="downloadTask" class="text-link" type="button">下载复测任务卡 ↓</button></div></div></div>
+      <div class="source-heading"><div><h3>证据档案</h3><p id="sourceCount"></p></div><label class="source-search"><span class="sr-only">搜索来源、机构或摘录</span><input type="search" id="sourceSearch" placeholder="搜索来源、机构或摘录…"></label></div>
+      <div id="sourceList" class="source-list"></div><p id="sourceSearchStatus" class="micro" role="status" aria-live="polite"></p>
+    </div></section>
+  </main>
+  <footer class="wrap footer"><div><span class="brand-word">FIELDNOTES.</span><p>从问题出发，以证据收束。</p></div><div>独立产品研究作品 · <span id="footerDate"></span><br>公开资料核验 / 工作流分析 / 交互式报告</div><div class="footer-links"><a class="text-link" href="docs/user-guide.html" target="_blank" rel="noopener">交互说明 ↗</a><a class="text-link" href="#">回到顶部 ↑</a></div></footer>
+  <dialog id="detailDialog" aria-labelledby="dialogTitle"><div class="dialog-header"><span class="eyebrow" id="dialogEyebrow">EVIDENCE NOTE</span><button id="closeDialog" type="button" aria-label="关闭详情">×</button></div><div class="dialog-content" id="dialogContent"></div></dialog>
+  <noscript><p class="noscript">请启用浏览器 JavaScript 以查看交互报告。全部数据已内嵌于本文件，无需联网或登录。</p></noscript>
+  <script type="application/json" id="researchData">{"meta":{"title":"从搜索到成稿","subtitle":"5 款 AI 研究型写作助手，谁适合你的工作流？","date":"2026-09-27","version":"1.0","method":"公开资料核验与工作流分析","task":"搜集资料，完成一份有引用、可审阅、可继续编辑的行业分析报告。","scope":"个人研究写作；记录 Web 与桌面入口差异；不纳入 API、企业采购与模型能力排行榜。"},"products":[{"id":"chatgpt","name":"ChatGPT","initial":"G","company":"OpenAI","angle":"研究到文件交付","entry":"Web / 桌面 Work","region":"支持地区；美元订阅报价","intro":"适合把研究、文件处理和交付放在连续任务里。","evidence":["O04.1","O05.1"],"cells":{"research":{"status":"conditional","text":"Deep research / Work","detail":"Web 与桌面文档均提供深度研究入口；可用性受账号、插件及工作区设置影响。","evidence":["O02.1","O02.2"],"scope":null},"citations":{"status":"documented","text":"搜索引用 + 报告来源","detail":"Web 搜索在对话中显示引用；研究报告提供来源供复查。","evidence":["O02.1","O02.2"],"scope":null},"files":{"status":"documented","text":"附件与项目资料","detail":"可上传文件并在 Work 中分析；本报告未把 API 上传限额套用到客户端。","evidence":["O05.2","O04.1"],"scope":null},"source_control":{"status":"conditional","text":"提供文件与连接资料","detail":"可提供资料作为研究上下文；本次文档未确认严格的仅指定来源开关。","evidence":["O02.1","O05.2"],"scope":null},"workspace":{"status":"documented","text":"Projects 共享上下文","detail":"同一项目集中管理对话、文件、指令与来源，支持持续研究。","evidence":["O03.1","O03.2"],"scope":null},"editing":{"status":"conditional","text":"桌面选区批注修订","detail":"桌面可对文件预览的具体位置提出修改；Web 通过说明页码、段落等迭代。","evidence":["O04.1","O04.2"],"scope":null},"export":{"status":"documented","text":"文档 / 表格 / 演示 / PDF","detail":"Work 官方文档明确支持生成、预览与下载这些文件。","evidence":["O04.1"],"scope":null},"limits":{"status":"conditional","text":"Work 与 Codex 共享用量","detail":"按模型、任务复杂度等消耗，可能另有周限制；不换算成固定报告篇数。","evidence":["O01.2","O01.3","O01.4"],"scope":null}}},{"id":"claude","name":"Claude","initial":"C","company":"Anthropic","angle":"长材料与共同改稿","entry":"Web / 桌面；Research、Docs","region":"支持地区；USD，税费另计","intro":"适合在文档与资料之间往返审阅，留意不同文件入口的限制。","evidence":["C03.2","C04.2"],"cells":{"research":{"status":"conditional","text":"付费 Research","detail":"Research 面向 Pro、Max 等付费计划，使用时须开启网页搜索。","evidence":["C02.1","C02.2"],"scope":null},"citations":{"status":"documented","text":"Research 附引用","detail":"官方明确说明研究答案带可检查引用；引用支持程度仍需阅读原文判断。","evidence":["C02.2"],"scope":null},"files":{"status":"conditional","text":"多种文档；PDF 分段处理","detail":"聊天附件上限 500MB/文件、20 个/聊天；PDF ≤100 页分析图文，101–1000 页仅文本；项目文件上限另为 30MB。","evidence":["C03.1","C03.2","C03.3"],"scope":null},"source_control":{"status":"conditional","text":"网页 + 内部连接资料","detail":"Research 可结合内部资料与网页；本文未确认任意域名白名单约束。","evidence":["C02.3"],"scope":null},"workspace":{"status":"documented","text":"Projects 与文档组织","detail":"Pro 说明包含 Projects，用于整理对话和文档；团队项目协作须另看团队套餐。","evidence":["C01.5","C04.3"],"scope":null},"editing":{"status":"documented","text":"Artifacts / Claude Docs","detail":"Artifacts 可在对话旁编辑、分享；Docs 支持与 Claude 及受邀者共同编辑。","evidence":["C04.1","C04.2","C04.3"],"scope":null},"export":{"status":"documented","text":"文件创建与分享链接","detail":"个人价格页包含文件创建；Artifacts 可通过链接分享。格式与权限以具体产物为准。","evidence":["C04.1","C01.4"],"scope":null},"limits":{"status":"conditional","text":"滚动时段 + 周用量","detail":"用量与对话复杂度、模型和功能有关；各入口共用额度，没有固定消息数保证。","evidence":["C01.2"],"scope":null}}},{"id":"gemini","name":"Gemini","initial":"✧","company":"Google","angle":"研究与 Docs 衔接","entry":"Gemini Web / Canvas","region":"美国套餐页；能力受地区与账号影响","intro":"适合已有 Google 文档工作流、需要先确定研究范围的人。","evidence":["G02.2","G02.4"],"cells":{"research":{"status":"documented","text":"先确认计划，再研究","detail":"支持修改研究计划；所有用户可用 Thinking 研究，Pro / Ultra 有更高额度。","evidence":["G02.3","G02.5","G02.6"],"scope":null},"citations":{"status":"conditional","text":"来源按钮 / 行内来源","detail":"官方说明部分回答提供来源，且并非所有回答都有链接；不能视为逐句引用保证。","evidence":["G05.1","G05.2"],"scope":null},"files":{"status":"conditional","text":"本地附件与 Drive 资料","detail":"Deep Research 支持上传文件与 NotebookLM；非视频支持类型单文件上限 100MB。","evidence":["G02.1","G04.1"],"scope":null},"source_control":{"status":"documented","text":"可取消 Google Search 来源","detail":"可选择 Gmail、Drive 等资料并取消默认网页搜索；连接相应服务后使用。","evidence":["G02.1","G02.2"],"scope":null},"workspace":{"status":"conditional","text":"Drive / Gmail / notebooks","detail":"研究可纳入连接的 Google 资料；不将它等同于其他产品的 Projects。","evidence":["G02.1"],"scope":null},"editing":{"status":"documented","text":"Canvas 直接与选区编辑","detail":"文档可直接编辑、选区提问，并查看保存的版本。","evidence":["G03.1","G03.2","G03.3"],"scope":null},"export":{"status":"documented","text":"研究报告 → Google Docs","detail":"研究完成后可分享 Canvas、导出到 Docs 或复制正文。","evidence":["G02.4"],"scope":null},"limits":{"status":"conditional","text":"研究次数与并行上限","detail":"研究单列每日次数与并行限制；Pro / Ultra 增加额度，未承诺固定篇数。","evidence":["G02.5","G01.3","G02.7"],"scope":null}}},{"id":"kimi","name":"Kimi","initial":"K","company":"Moonshot AI","angle":"中文资料与 Office 交付","entry":"Web 深度研究 / Docs","region":"中国大陆人民币订阅页","intro":"适合以 Word、PDF 为交付物的研究写作，分别使用研究与文档入口。","evidence":["K03.4","K04.3"],"cells":{"research":{"status":"documented","text":"澄清问题后自主研究","detail":"深度研究包含意图澄清、检索、推理与带引用的报告生成。","evidence":["K03.1","K03.2"],"scope":null},"citations":{"status":"documented","text":"正文引用可跳转原文","detail":"帮助中心说明引用内嵌正文，点击可跳转并高亮原文。","evidence":["K03.3"],"scope":null},"files":{"status":"documented","text":"Docs 上传 Word / PDF / Excel","detail":"上传已有文件后可继续编辑和改写；能力对应 Docs 入口。","evidence":["K04.2"],"scope":null},"source_control":{"status":"conditional","text":"提示词限定来源优先级","detail":"帮助中心建议限定时间、地域和来源类型；属于提示约束，未确认硬过滤。","evidence":["K03.5"],"scope":null},"workspace":{"status":"conditional","text":"项目与项目存储","detail":"当前购买页列出项目容量权益；套餐名称依购买页，不混用旧档任务次数。","evidence":["K01.5"],"scope":null},"editing":{"status":"documented","text":"Word 修改与修订批注","detail":"Docs 文档说明支持在原 Word 中插入批注、修改意见并保留格式。","evidence":["K04.1"],"scope":null},"export":{"status":"documented","text":"Word / PDF + HTML 分享","detail":"深度研究可导出 Word、PDF，并复制或分享 HTML 可视化；Docs 可下载原格式文件。","evidence":["K03.4","K04.3"],"scope":null},"limits":{"status":"conditional","text":"功能共享额度池","detail":"帮助中心说明不同会员功能共用额度；新任务可能因余额不足暂停，旧套餐次数不迁移。","evidence":["K05.2","K05.3"],"scope":null}}},{"id":"perplexity","name":"Perplexity","initial":"P","company":"Perplexity AI","angle":"以来源为中心的问答","entry":"开发者 iOS 说明；历史 Web 记录","region":"美国 App Store；Web 当前价格未取得","intro":"适合把带来源的搜索问答作为研究入口，文件与组织功能需在当前账号复核。","evidence":["P01.1","P01.2"],"cells":{"research":{"status":"documented","text":"Pro Search & Deep Research","detail":"开发者在 App Store 的说明列出搜索与深度研究，具体套餐额度未取得。","evidence":["P01.1"],"scope":null},"citations":{"status":"documented","text":"以带来源回答为卖点","detail":"开发者说明明确列出引用来源；此处记录产品承诺，不代表独立准确率评测。","evidence":["P01.2"],"scope":null},"files":{"status":"historical","text":"上传文件供检索","detail":"2025-08 的 Zapier 文章记录该功能；当前入口、大小与套餐限制未独立确认。","evidence":["P02.1"],"scope":null},"source_control":{"status":"unconfirmed","text":"严格来源筛选未确认","detail":"本次可访问的开发者说明未明确来源范围开关，保留未知状态。","evidence":["P01.1"],"scope":null},"workspace":{"status":"historical","text":"Spaces 组织与协作","detail":"2025-08 的二手资料记录用 Spaces 组织相关对话；不作为当前权益保证。","evidence":["P02.2"],"scope":null},"editing":{"status":"conditional","text":"对话追问深化结果","detail":"开发者说明支持 Thread Follow-Ups；文档选区编辑本次未确认。","evidence":["P01.3"],"scope":null},"export":{"status":"historical","text":"历史 Pages 分享报告","detail":"二手资料记录 Pages 分享型报告；原格式文件导出与当前状态未独立确认。","evidence":["P02.3"],"scope":null},"limits":{"status":"unconfirmed","text":"当前 Web 套餐规则未确认","detail":"官网价格与帮助页触发访问验证；未使用旧文章或 App Store 内购金额推断当前月费。","evidence":["P01.4","P02.4"],"scope":null}}}],"dimensions":[{"id":"research","label":"多步研究","group":"research","question":"能否先拆解问题，再跨来源研究？"},{"id":"citations","label":"引用与追溯","group":"verify","question":"能否回到回答所依赖的来源？"},{"id":"files","label":"材料输入","group":"research","question":"已有报告与表格能否参与研究？"},{"id":"source_control","label":"来源范围","group":"verify","question":"能否控制研究使用哪些资料？"},{"id":"workspace","label":"持续研究","group":"write","question":"资料与上下文怎样跨轮次保留？"},{"id":"editing","label":"改稿方式","group":"write","question":"如何对具体内容提出修改？"},{"id":"export","label":"交付衔接","group":"deliver","question":"结果怎样进入下一位协作者的工具？"},{"id":"limits","label":"使用边界","group":"deliver","question":"付费后还受哪些条件限制？"}],"plans":[{"id":"gpt-plus","product":"chatgpt","name":"Plus","currency":"USD","monthly":20,"annual":null,"annual_note":"本次来源未收录年付方案","region":"官方美元个人订阅报价","tax":"税费以结算页为准","evidence":["O01.1"],"representative":true},{"id":"claude-pro","product":"claude","name":"Pro","currency":"USD","monthly":20,"annual":200,"annual_note":"一次支付 US$200；折算为 US$16.67/月","region":"官方美元个人订阅报价","tax":"未含适用税费","evidence":["C01.1"],"representative":true},{"id":"gemini-pro","product":"gemini","name":"Google AI Pro","currency":"USD","monthly":19.99,"annual":null,"annual_note":"本次来源未收录年付方案","region":"美国个人订阅页面","tax":"税费以结算页为准","evidence":["G01.1"],"representative":true},{"id":"kimi-go","product":"kimi","name":"Go","currency":"CNY","monthly":49,"annual":468,"annual_note":"连续包年一次支付 ¥468","region":"中国大陆个人订阅页","tax":"以结算页为准","evidence":["K01.1","K02.1"],"representative":true},{"id":"kimi-plus","product":"kimi","name":"Plus","currency":"CNY","monthly":99,"annual":948,"annual_note":"连续包年一次支付 ¥948","region":"中国大陆个人订阅页","tax":"以结算页为准","evidence":["K01.2","K02.2"],"representative":false},{"id":"kimi-pro","product":"kimi","name":"Pro","currency":"CNY","monthly":199,"annual":1908,"annual_note":"连续包年一次支付 ¥1,908","region":"中国大陆个人订阅页","tax":"以结算页为准","evidence":["K01.3","K02.3"],"representative":false},{"id":"kimi-max","product":"kimi","name":"Max","currency":"CNY","monthly":699,"annual":6708,"annual_note":"连续包年一次支付 ¥6,708","region":"中国大陆个人订阅页","tax":"以结算页为准","evidence":["K01.4","K02.4"],"representative":false}],"sources":[{"id":"O01","title":"ChatGPT / Codex 个人计划与共享用量","publisher":"OpenAI","url":"https://learn.chatgpt.com/codex/pricing.md","final_url":"https://learn.chatgpt.com/docs/pricing.md","retrieved_at":"2026-09-27T08:34:32.990502+00:00","published":null,"kind":"official","scope":"个人 Plus；美元报价；ChatGPT Work 与 Codex 共享订阅用量","note":"采用官方文档中指向 ChatGPT Plus 的订阅卡；未把 API token 价格写成订阅价格。","capture":"公开页面正文","text_sha256":"9d832791e3c29bb3d32a63263d87dacf59d3ed741e636eea6de61d3a4815bc2e","quotes":[{"id":"O01.1","text":"name=\"Plus\" subtitle=\"Power a few focused coding sessions each week.\" price=\"$20\" interval=\"/month\""},{"id":"O01.2","text":"ChatGPT Work usage inside ChatGPT uses the same pricing, credits, and usage limits as Codex."},{"id":"O01.3","text":"Local messages and cloud chats share your plan's usage allowance. Weekly limits may also apply."},{"id":"O01.4","text":"The number of messages you can send depends on the model used, size and complexity of your tasks, and whether you run them locally or in the cloud."}]},{"id":"O02","title":"Web search：ChatGPT 搜索与深度研究入口","publisher":"OpenAI","url":"https://learn.chatgpt.com/codex/web-search.md","final_url":"https://learn.chatgpt.com/docs/web-search.md","retrieved_at":"2026-09-27T08:32:42.446455+00:00","published":null,"kind":"official","scope":"ChatGPT Web / 桌面 Work；受账号与工作区设置影响","note":"","capture":"公开页面正文","text_sha256":"700c068bdc5c8a48d0b080e128268c7c816c0708b0a15e58e66009840a76e4a7","quotes":[{"id":"O02.1","text":"Use the Deep research plugin in the desktop app for an investigation across multiple sources and a report you can review. 1. Switch to **Work** and open [**Plugins**](https://learn.chatgpt.com/docs/plugins?surface=app). 2. Select **Deep research**. Install or enable it if needed, then select **Try now** to start a Work chat. 3."},{"id":"O02.2","text":"In ChatGPT web, ask for current information or sources. Search results and citations appear in the chat when ChatGPT uses web search. Workspace settings can limit whether search is available."}]},{"id":"O03","title":"Projects and chats","publisher":"OpenAI","url":"https://learn.chatgpt.com/codex/projects.md","final_url":"https://learn.chatgpt.com/docs/projects.md","retrieved_at":"2026-09-27T08:32:42.324274+00:00","published":null,"kind":"official","scope":"ChatGPT Projects；区别于本地代码目录","note":"","capture":"公开页面正文","text_sha256":"9382409dbdb9929d94f37124c49af6f69c6f908aecaf997a3a6bb05cf100862e","quotes":[{"id":"O03.1","text":"Use a project to keep related chats, files, instructions, and sources together. The same project can contain chats started with Chat or ChatGPT Work."},{"id":"O03.2","text":"Each project has a **Chats** section that lists project chats and a **Sources** section for uploaded files and connected context. Project instructions apply across its chats. A ChatGPT project doesn't provide direct access to a folder on your computer, so upload or connect the sources you want ChatGPT to use."}]},{"id":"O04","title":"Work with files","publisher":"OpenAI","url":"https://learn.chatgpt.com/codex/artifacts-viewer.md","final_url":"https://learn.chatgpt.com/docs/artifacts-viewer.md","retrieved_at":"2026-09-27T08:36:55.331951+00:00","published":null,"kind":"official","scope":"ChatGPT Work Web / 桌面；选区批注为桌面说明","note":"","capture":"公开页面正文","text_sha256":"b0726eb2481155ad04b62ed7dd011d5f80d6fda79bdd3415b532014cbb7946b8","quotes":[{"id":"O04.1","text":"In ChatGPT Work on the web, attach source files or ask ChatGPT to create a document, presentation, spreadsheet, or PDF. Review the generated file in the chat, download it when needed, and give targeted feedback for the next version."},{"id":"O04.2","text":"Annotations let you point to a specific part of a file and tell ChatGPT what to change. The same annotation workflow available for code, Markdown files, and websites also works with documents, spreadsheets, and presentations."}]},{"id":"O05","title":"Use ChatGPT：研究与文件工作流","publisher":"OpenAI","url":"https://learn.chatgpt.com/codex/use-chatgpt.md","final_url":"https://learn.chatgpt.com/docs/use-chatgpt.md","retrieved_at":"2026-09-27T08:32:42.427506+00:00","published":null,"kind":"official","scope":"ChatGPT Work；Web / 桌面具体功能以入口为准","note":"","capture":"公开页面正文","text_sha256":"1348e74e72df43845c097f0c909f3063dd442059ccd77db43db7b5673be18432","quotes":[{"id":"O05.1","text":"**Research and analyze information.** Search the web, browse websites, compare sources, read files, analyze data, and summarize findings."},{"id":"O05.2","text":"**Use your files and tools.** Bring in uploaded files, [projects](https://learn.chatgpt.com/docs/projects), memories, ChatGPT Library, and installed [plugins](https://learn.chatgpt.com/docs/plugins)."}]},{"id":"C01","title":"Claude Plans & Pricing","publisher":"Anthropic","url":"https://www.anthropic.com/pricing","final_url":"https://claude.com/pricing","retrieved_at":"2026-09-27T08:31:57.360815+00:00","published":null,"kind":"official","scope":"个人 Free / Pro；美元公开价，未含适用税费","note":"官网年付展示约 $17/月，同时写明 $200 年付。本报告用 200÷12 计算，显示 $16.67。","capture":"公开页面正文","text_sha256":"598ae8132ac2d10c403d0ed7c24f77479c59b73715230ba3c3a3ca14f3f00834","quotes":[{"id":"C01.1","text":"Pro For everyday work $17 Per month with annual subscription discount ($200 billed up front). $20 if billed monthly."},{"id":"C01.2","text":"Every plan has usage limits that reset on a rolling five-hour session window, and paid plans add weekly limits on top. Your activity across Claude on web, desktop, mobile, and Claude Code all draws from the same pool. How much you can do depends on the length and complexity of your conversations, the model you choose, and the features you use, so there's no fixed message count."},{"id":"C01.3","text":"Research No Yes Yes"},{"id":"C01.4","text":"Search the web, create files, and run code"},{"id":"C01.5","text":"That includes Claude Code, Claude Design, Slides, and Docs, along with projects to organize your chats and documents, access to more Claude models, and Claude for Microsoft 365."}]},{"id":"C02","title":"Use research on Claude","publisher":"Anthropic","url":"https://support.claude.com/en/articles/11088861-using-research-on-claude","final_url":"https://support.claude.com/en/articles/11088861-use-research-on-claude","retrieved_at":"2026-09-27T08:35:27.228921+00:00","published":"2026-06-02","kind":"official","scope":"Pro / Max / Team / Enterprise；Web、桌面、移动端","note":"","capture":"公开页面正文","text_sha256":"1d1b95d2d90b8384f219246d522b1e95222cd375f87b0c5813432156e78f7cfd","quotes":[{"id":"C02.1","text":"Research is available for users with paid Claude plans (Pro, Max, Team, or Enterprise) using Claude on the web, Claude Desktop, or Claude Mobile."},{"id":"C02.2","text":"With research, Claude delivers thorough answers in minutes, complete with easy-to-check citations so you can trust Claude's findings. Important: You must have web search turned on for research to function."},{"id":"C02.3","text":"Once research is turned on, you can ask Claude a question. Claude will kick off the research process across your internal context (such as Gmail, Google Calendar, and Google Docs when connected) and the web."}]},{"id":"C03","title":"Upload files to Claude","publisher":"Anthropic","url":"https://support.claude.com/en/articles/8241126-what-kinds-of-documents-can-i-upload-to-claude","final_url":"https://support.claude.com/en/articles/8241126-upload-files-to-claude","retrieved_at":"2026-09-27T08:35:27.384973+00:00","published":"2026-07-23","kind":"official","scope":"聊天附件与项目文件分别适用；不比较模型上下文","note":"","capture":"公开页面正文","text_sha256":"fba18e3069dd973110ee03a52bb3e73f92e69df18dd82f87317cf2bd5cd5b934","quotes":[{"id":"C03.1","text":"Claude can work with the following document types: PDF DOCX CSV TXT HTML ODT RTF EPUB JSON XLSX* Note: You must enable code execution and file creation in your account to upload XLSX files."},{"id":"C03.2","text":"Chat uploads File size: 500MB per file Number of files: Up to 20 files per chat Image dimensions: Up to 8000x8000 pixels Number of pages: PDFs are limited to 1000 pages Project files File size: 30MB per file Number of files: Unlimited, but total content must fit within Claude's context window Content type: Text extraction only (except for multimodal PDFs)"},{"id":"C03.3","text":"Claude analyzes both text and visual elements (like images, charts, and graphics) in PDFs of 100 pages or fewer. For PDFs from 101 to 1000 pages, Claude processes text only and doesn't analyze visual elements. You can't upload PDFs over 1000 pages. If you try, you'll see an \"Uploaded file is too large\" error."}]},{"id":"C04","title":"Artifacts / Claude Docs","publisher":"Anthropic","url":"https://claude.com/features/artifacts","final_url":"https://claude.com/features/artifacts","retrieved_at":"2026-09-27T08:34:33.897467+00:00","published":null,"kind":"official","scope":"Artifacts 与 Docs；具体开放套餐结合价格页","note":"","capture":"公开页面正文","text_sha256":"f7ba4d91cfc8b8e61b7467278eda3bf6ee6264b2890c4adc56fb22441f4910b4","quotes":[{"id":"C04.1","text":"What is an artifact? Anything Claude makes for you that you’d put in front of someone: a design, a deck, a document, a dashboard, or a small interactive tool. It opens beside your conversation. You can edit it, come back to it, and share it with a link."},{"id":"C04.2","text":"Claude Docs is for documents you write with Claude and your team at the same time. Claude can draft sections, ask questions, and comment on choices."},{"id":"C04.3","text":"Who can see and edit my doc? It’s private by default. Invite people one at a time or as a group, and give view or edit access to only the people you invite, your organization, or anyone with the link."}]},{"id":"G01","title":"Google AI subscriptions — United States","publisher":"Google","url":"https://gemini.google/subscriptions/?hl=en","final_url":"https://gemini.google/us/subscriptions/?hl=en","retrieved_at":"2026-09-27T08:31:57.005839+00:00","published":null,"kind":"official","scope":"美国 / USD / 个人 Google AI Pro；Web 公布月价","note":"页面明确显示 United States；不将地区活动价或免费试用算作常规月价。","capture":"公开页面正文","text_sha256":"71b021332996e35def7eed790ecbd604bdefe1a81d16a8bccefa109972b9de37","quotes":[{"id":"G01.1","text":"Google AI Pro1 Get higher access to new and powerful features to boost your productivity and creativity."},{"id":"G01.2","text":"Gemini in Gmail, Docs, Vids, and more Access Gemini directly in Google apps"},{"id":"G01.3","text":"Usage access limits in the Gemini app: For the Gemini app, compute-based usage limits factor in the complexity of your prompt, the features you use, and the length of your chat. Your limit refreshes every 5 hours until you reach your weekly limit. You can extend your limits by purchasing AI credits. To learn more about usage access and how to use AI credits, please visit our Help Center. 3."}]},{"id":"G02","title":"Use Deep Research in Gemini Apps","publisher":"Google","url":"https://support.google.com/gemini/answer/15719111?hl=en","final_url":"https://support.google.com/gemini/answer/15719111?hl=en","retrieved_at":"2026-09-27T08:36:55.630599+00:00","published":null,"kind":"official","scope":"个人 Gemini；Pro / Ultra 提升额度；账号连接影响来源","note":"","capture":"公开页面正文","text_sha256":"9ec296469819fc572c3f92f3bbb4dd004847397c556b456dec4f0a2540c60604","quotes":[{"id":"G02.1","text":"You can change or add other sources, like your personal Gmail or Drive, for your research. You can also upload files and add NotebookLM notebooks."},{"id":"G02.2","text":"Google Search is included as a source by default. To limit your research to other selected sources, deselect Google Search."},{"id":"G02.3","text":"To update the research plan before you create a report, click Edit plan. Click Start research."},{"id":"G02.4","text":"To export the report, click Export to Docs . To copy the report text, click Copy Contents ."},{"id":"G02.5","text":"Google AI Pro and Google AI Ultra users get higher limits for how many research reports they can create."},{"id":"G02.6","text":"Google AI Pro and Google AI Ultra users can generate reports using Pro for even higher quality. All users can use Thinking for their reports."},{"id":"G02.7","text":"In Gemini Apps, there are limits for: Daily research requests Number of research requests you can run at the same time"}]},{"id":"G03","title":"Create docs, apps & more with Canvas","publisher":"Google","url":"https://support.google.com/gemini/answer/16047321?hl=en","final_url":"https://support.google.com/gemini/answer/16047321?hl=en","retrieved_at":"2026-09-27T08:36:54.898352+00:00","published":null,"kind":"official","scope":"Gemini Web Canvas；文档选区编辑与版本查看","note":"","capture":"公开页面正文","text_sha256":"c9fdba169cf24828013aab0b2264406fbd64fd4234962a95389f85fd52c9cbc8","quotes":[{"id":"G03.1","text":"In the Canvas space, you can directly edit the text or ask Gemini to help you in the prompt box."},{"id":"G03.2","text":"In the Canvas panel, use the cursor to select the text that you want to edit. In the text box, enter a prompt for what you want updated. Press Enter."},{"id":"G03.3","text":"To view your saved versions, at the top, click Previous Version or Next Version ."}]},{"id":"G04","title":"Upload & analyze files in Gemini Apps","publisher":"Google","url":"https://support.google.com/gemini/answer/14903178?hl=en","final_url":"https://support.google.com/gemini/answer/14903178?hl=en","retrieved_at":"2026-09-27T08:36:56.834068+00:00","published":null,"kind":"official","scope":"Gemini Apps 文件输入；文件类型限制分别适用","note":"","capture":"公开页面正文","text_sha256":"0b1694dc7bb21a3106c408ab2606c450110dc5e2b6fa5c1af93da778a86fe9e2","quotes":[{"id":"G04.1","text":"Each video can be up to 2 GB. All other supported file types can be up to 100 MB."},{"id":"G04.2","text":"You can ask the Gemini web app to create a chart based on your uploaded spreadsheet(s), zoom in to explore the chart, and customize the chart for your needs. Customize a chart Below the chart, tap Edit ."}]},{"id":"G05","title":"View related sources from Gemini Apps","publisher":"Google","url":"https://support.google.com/gemini/answer/14143489?hl=en","final_url":"https://support.google.com/gemini/answer/14143489?hl=en","retrieved_at":"2026-09-27T08:38:35.545349+00:00","published":null,"kind":"official","scope":"来源按钮与行内来源；不是逐句准确性承诺","note":"","capture":"公开页面正文","text_sha256":"d119d67e0d1eb8bf0ee85f44b73592e24346633d5cd9ae3300f687615ed22ac8","quotes":[{"id":"G05.1","text":"When sources are available, you can find the Sources button at the bottom of the response or in-line throughout the response. On the right, a side panel will open with the relevant links."},{"id":"G05.2","text":"Not all responses include related links or sources. If you don’t have the Sources button below a response, Gemini Apps didn’t provide any links for that particular response."}]},{"id":"K01","title":"Kimi 会员订阅 — 连续包月","publisher":"Moonshot AI","url":"https://www.kimi.com/membership/pricing","final_url":"https://www.kimi.com/membership/pricing","retrieved_at":"2026-09-27T08:36:38.942Z","published":null,"kind":"official","scope":"中国大陆人民币报价；个人 Go / Plus / Pro / Max","note":"购买页当前命名与帮助中心旧名称不一致，套餐名称与价格采用已渲染的购买页；旧档额度不迁移。","capture":"浏览器渲染，选择连续包月","text_sha256":"860161878da47df27b77ff1b39252fbf0ff21bfb2c6e6ca2584cf9e451e57037","quotes":[{"id":"K01.1","text":"Go 日常使用 ¥ 49 / 月 按月计费 订阅 更多 Agent 额度 Office 文件处理 深度研究 网站部署"},{"id":"K01.2","text":"Plus 效率升级 ¥ 99 / 月 按月计费 订阅 2 倍 Agent 额度 Office 文件处理 深度研究 网站部署"},{"id":"K01.3","text":"Pro 专业优选 ¥ 199 / 月 按月计费 订阅 4 倍 Agent 额度 Office 文件处理 深度研究 网站部署"},{"id":"K01.4","text":"Max 全能尊享 ¥ 699 / 月 按月计费 订阅 14 倍 Agent 额度 Office 文件处理 深度研究 网站部署"},{"id":"K01.5","text":"项目数 2 个项目 20 个项目 20 个项目 20 个项目 100 个项目 项目存储空间 500MB 20GB 20GB 20GB 50GB"}]},{"id":"K02","title":"Kimi 会员订阅 — 连续包年","publisher":"Moonshot AI","url":"https://www.kimi.com/membership/pricing","final_url":"https://www.kimi.com/membership/pricing","retrieved_at":"2026-09-27T08:36:37.353Z","published":null,"kind":"official","scope":"中国大陆 / CNY；页面默认年付档，年价一次支付","note":"","capture":"浏览器渲染，选择连续包年","text_sha256":"b8cb2dd763ae0f2e4d79da0e424a2fe5ba06c4cb1f5798e056ab62b573424871","quotes":[{"id":"K02.1","text":"Go 日常使用 ¥ 39 / 月 ¥49 按年计费 ¥468"},{"id":"K02.2","text":"Plus 效率升级 ¥ 79 / 月 ¥99 按年计费 ¥948"},{"id":"K02.3","text":"Pro 专业优选 ¥ 159 / 月 ¥199 按年计费 ¥1,908"},{"id":"K02.4","text":"Max 全能尊享 ¥ 559 / 月 ¥699 按年计费 ¥6,708"}]},{"id":"K03","title":"Kimi 深度研究：工作链路、引用与导出","publisher":"Moonshot AI","url":"https://www.kimi.com/help/deep-research/deep-research-overview","final_url":"https://www.kimi.com/help/deep-research/deep-research-overview","retrieved_at":"2026-09-27T08:38:14.276445+00:00","published":null,"kind":"official","scope":"Kimi 深度研究模式；与 Docs 分别记录","note":"文档中以旧套餐 Moderato 为基准的消耗比例未采纳。","capture":"公开页面正文","text_sha256":"0277d152d5f93ccc58fd6e4d238d4b3c3e751e6d4c2c5113b1cad6852ab463ce","quotes":[{"id":"K03.1","text":"意图澄清：理解任务时主动反问，明确研究方向，构建更清晰的问题空间；"},{"id":"K03.2","text":"报告生成：将所有信息整合，输出结构化长篇报告，并附带引用来源"},{"id":"K03.3","text":"所有引用都内嵌在正文中，点击即可跳转，并高亮原文，便于验证与追溯。"},{"id":"K03.4","text":"按需预览、下载或分享：报告支持导出为 PDF、Word 格式；可视化报告支持预览、源代码复制及公开链接分享。"},{"id":"K03.5","text":"来源类型：指定优先参考的信息类型，例如“优先引用官方报告与学术论文”；"}]},{"id":"K04","title":"Kimi Docs 与 Sheets 功能介绍","publisher":"Moonshot AI","url":"https://www.kimi.com/help/docs-and-sheets/docs-and-sheets-overview","final_url":"https://www.kimi.com/help/docs-and-sheets/docs-and-sheets-overview","retrieved_at":"2026-09-27T08:38:14.197043+00:00","published":null,"kind":"official","scope":"Kimi Docs；上传已有文件、批注、原格式下载","note":"","capture":"公开页面正文","text_sha256":"e8296535542dd6f28af93b583fbe7d2e5a620fc417c7249858c0047245b9c208","quotes":[{"id":"K04.1","text":"在原有 Word 文档里插入批注、修改意见，保留原格式"},{"id":"K04.2","text":"也可以上传已有 Word/PDF/Excel 文件，再说明要做什么操作，让 Kimi 帮你完成文档编辑与改写。"},{"id":"K04.3","text":"完成后直接下载 .docx / .xlsx / .pdf 原格式文件，在本地用对应文档处理软件继续进行修改。"}]},{"id":"K05","title":"Kimi 会员收费与额度说明","publisher":"Moonshot AI","url":"https://www.kimi.com/help/membership/membership-pricing","final_url":"https://www.kimi.com/help/membership/membership-pricing","retrieved_at":"2026-09-27T08:38:14.223244+00:00","published":null,"kind":"official","scope":"帮助中心仍使用旧套餐名称；只采纳通用共享额度规则","note":"与购买页 Go/Plus/Pro/Max 命名冲突；旧套餐的任务次数未套用到新套餐。","capture":"公开页面正文","text_sha256":"69138ebc342af6f5defab4d05049d108aa5236de13f7b27b97706fbfff1a02fc","quotes":[{"id":"K05.1","text":"Andante日常使用¥49/月年付更优惠 Moderato效率升级¥99/月年付更优惠 Allegretto专业优选¥199/月年付更优惠 Allegro全能尊享¥699/月年付更优惠"},{"id":"K05.2","text":"所有 Kimi 会员功能共享一个额度池，额度可自由分配使用。"},{"id":"K05.3","text":"当前正在进行的任务可以正常完成，新任务将提示额度不足。你可以： 等待额度按月自动刷新（Kimi Code 的 5 小时 / 周使用限额到期后也会自动解除，仅影响 Kimi Code） 升级至更高等级会员获取更多额度 购买加油包：开启后按实际用量付费，无需等待额度刷新即可继续使用 参与官方活动获取赠送额度 可以把额度都"}]},{"id":"P01","title":"Perplexity — App Store 美国区开发者说明","publisher":"Perplexity AI, Inc. / Apple","url":"https://apps.apple.com/us/app/perplexity-ask-anything/id1668000334","final_url":"https://apps.apple.com/us/app/perplexity-ai-search-chat/id1668000334","retrieved_at":"2026-09-27T08:35:26.120753+00:00","published":null,"kind":"publisher","scope":"iOS 开发者产品说明；内购金额未标明计费周期","note":"官方站触发访问验证，采用开发者在 App Store 的公开说明。$20 / $200 内购项没有周期，不据此推断 Web 当前月价。","capture":"公开页面正文","text_sha256":"d96134fe3a93f83121aa7b0621e0a20b08f0a9add73c5a4a0009031025edbced","quotes":[{"id":"P01.1","text":"Perplexity Pro Search & Deep Research: Guided AI search for deeper exploration."},{"id":"P01.2","text":"Trust Built In: Cited sources for every answer."},{"id":"P01.3","text":"Thread Follow-Ups: Keep the conversation going for a deeper understanding."},{"id":"P01.4","text":"In-App Purchases Yes Perplexity Pro $20.00 500 Credits $5.00 1,000 Credits $10.00 2,500 Credits $25.00 Perplexity Pro $20.00 Perplexity Pro $200.00 Perplexity Max $200.00 Perplexity Pro $20.00 5,000 Credits $50.00 Perplexity"}]},{"id":"P02","title":"What is Perplexity AI?","publisher":"Zapier / Harry Guinness","url":"https://zapier.com/blog/perplexity-ai/","final_url":"https://zapier.com/blog/perplexity-ai/","retrieved_at":"2026-09-27T08:35:26.876128+00:00","published":"2025-08-19","kind":"secondary","scope":"历史二手资料，2025-08-19；不作为当前套餐价或额度依据","note":"仅作为文件上传、Spaces 与 Pages 的历史功能记录；当前入口及套餐适用范围未独立确认。","capture":"公开页面正文","text_sha256":"5bce5827317ebe27529ff1204515a9f014e91664373e1bde8615e1b6adc7dc63","quotes":[{"id":"P02.1","text":"You can upload your own files and documents that Perplexity will then also search."},{"id":"P02.2","text":"Then there are Spaces, which allow you to group related threads and collaborate with other people."},{"id":"P02.3","text":"Pages, which are ready-to-share reports."},{"id":"P02.4","text":"Perplexity Pro costs $20/month and allows you to use more powerful AI models, conduct more searches, and use features like Research and Labs with far bigger limits."}]}],"findings":[{"number":"01","title":"研究与引用，已经是共同起点。","body":"五款产品的公开材料都描述了研究与来源展示。选型应继续追问：来源能否限定、材料怎样进入任务、引用能否支持关键结论。","evidence":["O02.1","C02.2","G02.1","G05.1","K03.3","P01.1","P01.2"]},{"number":"02","title":"交付到哪里，决定工作流怎么选。","body":"Gemini 可把研究导出到 Docs；Kimi 明确提供 Word / PDF；ChatGPT Work 生成多种文件；Claude 提供 Artifacts 与 Docs。优先匹配现有审阅工具。","evidence":["G02.4","K03.4","O04.1","C04.1","C04.2"]},{"number":"03","title":"套餐名与月费，都需要带上条件。","body":"Kimi 当前购买页与帮助中心名称不同；Claude 的年付展示值经过取整。产品比较必须保留计费周期、入口和原始证据，才能据此做预算。","evidence":["K01.1","K05.1","C01.1"]}],"scenarios":[{"id":"discover","label":"从零搜集资料","title":"先缩小问题，再比较来源。","pick":["perplexity","gemini"],"reason":"Perplexity 以搜索和引用作为公开产品定位；Gemini 明确提供研究计划编辑和来源选择。把它们列入前期资料探索的试用候选。","boundary":"Perplexity 当前 Web 额度尚未核实；两者的资料覆盖与准确性均未在本项目中同题实测。","evidence":["P01.1","P01.2","G02.2","G02.3"]},{"id":"materials","label":"已有长材料","title":"按文件类型与审阅方式选择。","pick":["claude","chatgpt"],"reason":"Claude 明确列出文件类型和 PDF 图文处理边界；ChatGPT Projects 可集中管理相关文件、来源和指令。适合先围绕手头材料做短任务验证。","boundary":"文件能上传不等于每页都理解正确。Claude 长 PDF 的图像处理分段规则尤其需要注意。","evidence":["C03.1","C03.2","C03.3","O03.1"]},{"id":"revision","label":"反复修改稿件","title":"把反馈落到具体段落与版本。","pick":["gemini","claude","chatgpt"],"reason":"Gemini Canvas 支持选区编辑与保存版本；Claude Docs 提供共同编辑；ChatGPT 桌面支持文件预览批注。按团队能否沿用这些入口做选择。","boundary":"这些是交互能力对照；不据此声称哪款写作质量最好或改稿速度最快。","evidence":["G03.2","G03.3","C04.2","O04.2"]},{"id":"handoff","label":"交付 Word / PDF","title":"让结果进入现有审阅流程。","pick":["kimi","chatgpt"],"reason":"Kimi 深度研究明确导出 Word / PDF，Docs 支持原文件批注；ChatGPT Work 可创建、下载文档与 PDF。适合把文件交给同事继续编辑。","boundary":"需分别试查字体、表格、引用与修订记录；公开支持某格式不能代替真实交付验收。","evidence":["K03.4","K04.1","O04.1"]}],"audit":[{"title":"购买页与帮助中心，出现了两套套餐名。","observation":"Kimi 购买页显示 Go / Plus / Pro / Max，帮助中心仍显示 Andante / Moderato / Allegretto / Allegro。","decision":"采用已渲染购买页的名称与价格；不将旧套餐任务次数直接移到新套餐。","impact":"保留了可用的价格数据，也避免制造看似精确的“每月可做几份报告”。","evidence":["K01.1","K01.2","K05.1"]},{"title":"“约 $17/月”与“每月付款 $17”不同。","observation":"Claude 页面标示年付折算 $17，同时注明年付总额 $200、月付 $20。","decision":"保存年价 200 与月价 20；图表年付折算由 200÷12 生成，保留两位小数。","impact":"年付总额、折算月费与实际付款周期各自清楚，预算计算不会被取整误导。","evidence":["C01.1"]},{"title":"看见内购金额，还不能确定当前 Web 月费。","observation":"Perplexity 官方站触发访问验证。美国 App Store 列出 Pro 的 $20 与 $200 内购项，但未标计费周期。","decision":"功能采用开发者公开说明；当前 Web 月价不进图表。2025 年二手记录单独标注日期。","impact":"保留五产品比较；价格空缺不会被当成免费，也不会用旧报价冒充本次核验。","evidence":["P01.4","P02.4"]}],"opportunities":[{"priority":"P0","title":"给研究任务增加一份“证据交接单”。","observation":"已有产品能展示来源并输出文件，但本次公开文档没有完整证明“陈述—原文—适用口径—人工处理记录”可随交付统一保留。","judgment":"单纯增加引用已难构成充分区分。更值得验证的是审阅者能否快速核对关键数字，定位冲突并理解处理过程。","proposal":"先做轻量交接模板：关键陈述、出处摘录、时间/地区/档位、冲突说明、处理记录。用同一份报告观察定位证据的时间与错误判断。","boundary":"这是产品研究假设，尚无用户访谈、付费意愿或节省工时数据；不宣称市场空白。","evidence":["O02.2","C02.2","G05.2","K03.3","P01.2"]},{"priority":"P1","title":"在订阅前，解释一次任务的用量边界。","observation":"Claude 与 ChatGPT 的用量受任务复杂度等影响，Kimi 帮助中心说明功能共享额度；月费无法直接换算为固定报告篇数。","judgment":"选型过程应先验证任务能否持续完成，再决定升级。跨产品做统一“每篇成本”需要真实消耗记录。","proposal":"设计一份任务预算记录表，记录入口、档位、任务长度、附件、实际用量与中断位置；有基线后再评估预测功能。","boundary":"本项目未调用五款产品完成同题测试，不填造运行时间、用量或成功率。","evidence":["O01.2","C01.2","K05.2"]}],"task_prompt":"你是一名行业研究助理。请为准备进入中国大陆企业知识管理软件市场的产品团队，完成一份可审阅的行业分析简报。\n\n时间范围：截至任务实际执行当天；涉及历史数据必须标年份。\n任务范围：市场结构、三个有公开产品资料的代表产品、主要工作流、进入机会与风险。\n先输出研究计划和来源类型，等待确认后开始研究。\n优先公司官方文档、财报、政府或研究机构原始报告；重要数字要记录原文链接、发布日期、单位和地区。\n不使用无法追溯的市场规模或增长率。观点与事实分别表达，遇到冲突说明原因。\n交付：约 1500 字中文简报、一张产品对照表，以及“关键陈述—来源原文—适用口径”的证据清单。\n修改任务：把一段机会分析改得更保守，保留事实与引用，并说明修改点。\n导出任务：将成稿交付为可继续编辑的文档，并检查引用是否保留。\n\n本任务卡用于未来同题复测；网站现有结论来自公开资料核验，未冒充任务实测结果。","limitations":["能力状态反映公开资料支持程度，不是同题实测得分；资料更新可能使本快照过时。","跨产品的文件大小、引用形式与额度定义不同，本文不合成为总分。","Perplexity 官网访问受限；开发者说明与历史二手记录在页面分别标注。"],"access_log":[{"url":"https://www.perplexity.ai/pricing","result":"HTTP 403；未取得当前价格正文"},{"url":"https://www.perplexity.ai/pro","result":"浏览器显示安全验证；未尝试绕过"},{"url":"https://www.kimi.com/membership/pricing","result":"静态 HTML 无价格正文；普通浏览器渲染并分别选择月付、年付后采集"}]}</script>
+  <script>(() => {
+  'use strict';
+  const D = JSON.parse(document.getElementById('researchData').textContent);
+  const $ = id => document.getElementById(id);
+  const esc = v => String(v ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  const products = new Map(D.products.map(p => [p.id, p]));
+  const sources = new Map(D.sources.map(s => [s.id,s]));
+  const quotes = new Map(D.sources.flatMap(s => s.quotes.map(q => [q.id,{...q,source:s}])));
+  const status = {documented:'有公开说明',conditional:'附条件 / 入口差异',historical:'历史二手记录',unconfirmed:'本次未确认'};
+  const kinds = {official:'官方文档',publisher:'开发者公开说明',secondary:'历史二手资料'};
+  const groups = {all:'全部环节',research:'搜集资料',verify:'核对依据',write:'写作改稿',deliver:'交付与限制'};
+  const state = {selected:new Set(D.products.map(p=>p.id)), group:'all', scenario:D.scenarios[0].id, billing:'monthly'};
+  const date = D.meta.date.replaceAll('-','.');
+  const sourceIds = refs => [...new Set(refs.map(r=>r.split('.')[0]))];
+  const refs = items => `<div class="refs" aria-label="支持此项的来源">${sourceIds(items).map(id=>`<button type="button" class="ref-btn" data-evidence="${esc(items.filter(q=>q.startsWith(id+'.')).join('|'))}" aria-label="查看 ${esc(id)} ${esc(sources.get(id).title)}">${esc(id)} ↗</button>`).join('')}</div>`;
+  const money = (n,currency) => `${currency==='USD'?'US$':'¥'}${n.toLocaleString('en-US',{minimumFractionDigits:Number.isInteger(n)?0:2,maximumFractionDigits:2})}`;
+  const dot = s => `<span class="map-dot ${esc(s)}" aria-hidden="true"></span>`;
+  const scope = (p,c) => c.scope || `${p.entry}；${p.region}`;
+  function openDialog(title,body,eyebrow='EVIDENCE NOTE') {
+    $('dialogEyebrow').textContent=eyebrow;
+    $('dialogContent').innerHTML=`<h2 id="dialogTitle">${esc(title)}</h2>${body}`;
+    if(!$('detailDialog').open)$('detailDialog').showModal();
+    $('detailDialog').scrollTop=0;
+  }
+  function evidenceBlocks(items) {
+    return sourceIds(items).map(id=>{
+      const s=sources.get(id), qs=items.filter(q=>q.startsWith(id+'.'));
+      return `<section class="dialog-evidence"><h3>${esc(id)} · ${esc(s.title)}</h3><p>${esc(kinds[s.kind])} · ${esc(s.publisher)} · 采集 ${esc(s.retrieved_at.slice(0,10))}${s.published?' · 原文日期 '+esc(s.published):''}</p><p>适用口径：${esc(s.scope)}</p>${qs.map(q=>`<blockquote><small>${esc(q)} · 原文摘录</small><br>${esc(quotes.get(q).text)}…</blockquote>`).join('')}${s.note?`<p>核验备注：${esc(s.note)}</p>`:''}<a href="${esc(s.url)}" target="_blank" rel="noopener noreferrer">查看原始页面 ↗<br>${esc(s.url)}</a></section>`;
+    }).join('');
+  }
+  function showCell(product,dimension) {
+    const p=products.get(product), dim=D.dimensions.find(d=>d.id===dimension), c=p.cells[dimension];
+    openDialog(`${p.name} · ${dim.label}`,`<span class="cell-status">${dot(c.status)}${esc(status[c.status])}</span><p><strong>${esc(c.text)}</strong></p><p>${esc(c.detail)}</p><p class="dialog-scope">适用入口：${esc(scope(p,c))}<br>记录日期：${esc(D.meta.date)}。公开说明不等于本项目实测结果。</p>${evidenceBlocks(c.evidence)}`);
+  }
+  function renderTable() {
+    const ps=D.products.filter(p=>state.selected.has(p.id));
+    const dims=D.dimensions.filter(d=>state.group==='all'||d.group===state.group);
+    $('comparisonTable').style.minWidth=`${Math.max(320,150+ps.length*185)}px`;
+    $('comparisonTable').style.setProperty('--columns',ps.length);
+    $('comparisonTable').innerHTML=`<caption class="sr-only">研究型写作工作流功能对照，资料快照 ${esc(D.meta.date)}</caption><thead><tr><th scope="col">工作环节<small>点开能力，查看证据</small></th>${ps.map(p=>`<th scope="col">${esc(p.name)}<small>${esc(p.entry)}</small></th>`).join('')}</tr></thead><tbody>${ps.length?dims.map(d=>`<tr><th scope="row">${esc(d.label)}<small>${esc(d.question)}</small></th>${ps.map(p=>{const c=p.cells[d.id];return `<td><button type="button" class="cell-button" data-product="${p.id}" data-dimension="${d.id}" aria-label="${esc(p.name+'，'+d.label+'，'+c.text+'。查看证据')} "><span class="cell-status">${dot(c.status)}${esc(status[c.status])}</span><strong>${esc(c.text)}</strong><span class="cell-reference">${esc(sourceIds(c.evidence).join(' · '))} ↗</span></button></td>`;}).join('')}</tr>`).join(''):'<tr><td class="empty-cell">请选择至少一款产品，或点击“恢复全部产品与环节”。</td></tr>'}</tbody>`;
+    $('comparisonCount').textContent=`当前 ${ps.length} 款产品 · ${dims.length} 个维度 · ${ps.length*dims.length} 项记录`;
+    document.querySelectorAll('[data-group]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.group===state.group)));
+    document.querySelectorAll('[data-filter-product]').forEach(input=>input.checked=state.selected.has(input.dataset.filterProduct));
+  }
+  function scenarioHTML(s) {
+    return `<h3>${esc(s.title)}</h3><div class="pick-tags">${s.pick.map(id=>`<span class="pick-tag">${esc(products.get(id).name)}</span>`).join('')}</div><p>${esc(s.reason)}</p><p class="scenario-boundary">试用时检查：${esc(s.boundary)}</p>${refs(s.evidence)}`;
+  }
+  function renderScenario() {
+    const s=D.scenarios.find(s=>s.id===state.scenario);
+    document.querySelectorAll('[data-scenario]').forEach(b=>{const selected=b.dataset.scenario===s.id;b.setAttribute('aria-selected',String(selected));b.tabIndex=selected?0:-1;});
+    $('scenarioPanel').setAttribute('aria-labelledby','scenario-'+s.id);
+    $('scenarioPanel').innerHTML=scenarioHTML(s);
+  }
+  function renderPrices() {
+    document.querySelectorAll('[data-billing]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.billing===state.billing)));
+    const annual=state.billing==='annual';
+    $('priceCharts').innerHTML=['USD','CNY'].map(currency=>{
+      const list=D.plans.filter(p=>p.representative&&p.currency===currency);
+      // Both modes use the same scale within each currency. Unknown prices never become zero.
+      const max=Math.ceil(Math.max(...list.map(p=>p.monthly))/5)*5;
+      return `<div class="price-group ${currency.toLowerCase()}" aria-label="${currency} 套餐月费图"><div class="price-group-head"><strong>${currency==='USD'?'美元 USD':'人民币 CNY'}</strong><span>${annual?'年价 ÷ 12；实际按年付款':'月付方案的每月付款额'}</span></div>${list.map(p=>{
+        const value=annual?(p.annual===null?null:p.annual/12):p.monthly;
+        return `<div class="price-row"><div class="price-name">${esc(products.get(p.product).name)}<small>${esc(p.name)}</small></div>${value===null?`<div class="price-absent">${esc(p.annual_note)}</div>`:`<div class="bar-track" aria-hidden="true"><span class="bar-fill" style="width:${(value/max*100).toFixed(4)}%"></span></div><div class="price-amount">${money(value,currency)}<small>${annual?'年付折算 / 月':'/ 月'}</small></div>`}</div>`;
+      }).join('')}<div class="chart-axis" aria-hidden="true"><span>0</span><span>${max/2}</span><span>${max}</span></div><p class="micro">横轴：${currency} / 月；纵轴：所选套餐。${currency==='USD'?'美元公开报价，地区及税费见明细。':'中国大陆报价，与美元图独立刻度。'}采集 ${esc(D.meta.date)}。</p>${refs(list.flatMap(p=>p.evidence))}</div>`;
+    }).join('');
+  }
+  function renderCalculator() {
+    const p=D.plans.find(p=>p.id===$('calcPlan').value);
+    const months=Number($('calcMonths').value);
+    $('monthValue').textContent=months;
+    const monthlyTotal=Math.round(p.monthly*100)*months/100;
+    const difference=Math.round((monthlyTotal-p.annual)*100)/100;
+    const verdict=difference===0?'两种方式支出相同。':difference>0?`年付少支出 ${money(difference,p.currency)}。`:`按月付款少支出 ${money(-difference,p.currency)}。`;
+    $('calcResult').innerHTML=`<div class="calc-line"><span>月付 × ${months} 个月</span><strong>${money(monthlyTotal,p.currency)}</strong></div><div class="calc-line"><span>年付一次支付</span><strong>${money(p.annual,p.currency)}</strong></div><p class="calc-verdict">${esc(verdict)}</p><p class="micro">计算不含额外用量、税费、优惠或退款；不是产品效果比较。</p>${refs(p.evidence)}`;
+  }
+  function sourceHTML(s) {
+    return `<details class="source-item" id="source-${s.id}"><summary><span class="source-id">${esc(s.id)}</span><span class="source-title">${esc(s.title)}<span class="source-kind">${esc(kinds[s.kind])} · ${esc(s.publisher)}${s.published?' · 原文 '+esc(s.published):''}</span></span><span class="source-toggle" aria-hidden="true">＋</span></summary><div class="source-body"><p>适用口径：${esc(s.scope)}</p><p>访问时间：${esc(s.retrieved_at)}<br>采集方式：${esc(s.capture)}</p>${s.note?`<p>处理说明：${esc(s.note)}</p>`:''}<a class="source-url" href="${esc(s.url)}" target="_blank" rel="noopener noreferrer">${esc(s.url)} ↗</a>${s.quotes.map(q=>`<blockquote><span class="quote-id">${esc(q.id)} · 原文摘录</span>${esc(q.text)}…</blockquote>`).join('')}</div></details>`;
+  }
+  function renderSources() {
+    const query=$('sourceSearch').value.trim().toLocaleLowerCase();
+    const list=D.sources.filter(s=>JSON.stringify(s).toLocaleLowerCase().includes(query));
+    $('sourceList').innerHTML=list.map(sourceHTML).join('');
+    $('sourceSearchStatus').textContent=list.length?`显示 ${list.length} / ${D.sources.length} 条来源记录`:'未找到匹配来源。可尝试产品名、来源编号或清空搜索。';
+  }
+  function download(filename,text,type) {
+    const url=URL.createObjectURL(new Blob([text],{type}));
+    const a=document.createElement('a');a.href=url;a.download=filename;document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);
+  }
+  const downloadTask=()=>download('研究型写作-统一复测任务卡.txt',D.task_prompt,'text/plain;charset=utf-8');
 
-    <!-- 雷达图（小倍数） -->
-    <div class="card">
-      <div class="chart-head">
-        <div>
-          <h3>5 项能力评分（小倍数雷达）</h3>
-          <p class="sub">评分区间 0–5，为本次调研的<strong>主观评估</strong>，依据为上下文规格、多模态覆盖、免费额度与公开测评口碑。</p>
-        </div>
-      </div>
-      <div class="radar-grid" id="radarGrid"></div>
-      <p class="chart-note">
-        拆成 5 张小图而非叠加成一张：5 条半透明多边形叠加后，色觉障碍读者无法区分其中的青绿与品红
-        （模拟 deuteranopia 下色差 ΔE 仅 1.6，远低于 8 的可辨阈值）。小倍数下每款产品的形状可直接对比，
-        产品色在整页保持一致。
-        <strong style="color:var(--text-secondary)">综合得分</strong>为标准化的 5 项均值，见每张图标题下方。
-      </p>
-    </div>
+  // Render the document from the embedded research data, without network requests.
+  $('editionDate').textContent=`资料快照 ${date}`;
+  $('snapshotDate').textContent=D.meta.date;$('footerDate').textContent=date;
+  const distinctURLs=new Set(D.sources.map(s=>s.url)).size;
+  $('researchMeta').innerHTML=`<div class="meta-item"><strong>${D.products.length.toString().padStart(2,'0')}</strong><span>研究型助手<br>同一写作任务</span></div><div class="meta-item"><strong>${D.dimensions.length.toString().padStart(2,'0')}</strong><span>工作流维度<br>逐项对照</span></div><div class="meta-item"><strong>${distinctURLs}</strong><span>公开资料页面<br>可展开原文摘录</span></div><div class="meta-method"><b>${esc(D.meta.method)}</b><span>快照 ${date} · 非同题性能实测</span></div>`;
+  $('findingsList').innerHTML=D.findings.map(f=>`<article class="finding"><div class="finding-num">${esc(f.number)}</div><h3>${esc(f.title)}</h3><p>${esc(f.body)}</p>${refs(f.evidence)}</article>`).join('');
+  const stages=[['research','01 搜集'],['citations','02 查据'],['editing','03 改稿'],['export','04 交付']];
+  $('workflowMap').innerHTML=`<table class="map-table"><caption class="sr-only">研究流程能力地图；来源与条件可点击展开</caption><thead><tr><th scope="col">产品 / 工作环节</th>${stages.map(([,label])=>`<th scope="col">${esc(label)}</th>`).join('')}</tr></thead><tbody>${D.products.map(p=>`<tr><th scope="row">${esc(p.name)}</th>${stages.map(([id])=>{const c=p.cells[id];return `<td><button class="map-cell" type="button" data-product="${p.id}" data-dimension="${id}" aria-label="${esc(p.name+'：'+c.text+'；'+status[c.status])}"><span>${esc(c.text)}<small style="display:block;font-size:9px;color:var(--muted);margin-top:4px">${esc(status[c.status])}</small></span>${dot(c.status)}</button></td>`;}).join('')}</tr>`).join('')}</tbody></table>`;
+  $('productStrip').innerHTML=D.products.map(p=>`<article><div class="product-monogram" aria-hidden="true">${esc(p.initial)}</div><h4>${esc(p.name)}</h4><p>${esc(p.intro)}</p>${refs(p.evidence)}</article>`).join('');
+  $('productFilters').insertAdjacentHTML('beforeend',D.products.map(p=>`<label class="product-filter"><input type="checkbox" checked data-filter-product="${p.id}">${esc(p.name)}</label>`).join(''));
+  $('groupFilters').innerHTML=Object.entries(groups).map(([id,label])=>`<button class="group-button" type="button" data-group="${id}" aria-pressed="${id==='all'}">${esc(label)}</button>`).join('');
+  $('statusLegend').innerHTML=Object.entries(status).map(([id,label])=>`<span>${dot(id)}${esc(label)}</span>`).join('');
+  renderTable();
+  $('scenarioTabs').innerHTML=D.scenarios.map((s,i)=>`<button class="scenario-tab" id="scenario-${s.id}" type="button" role="tab" data-scenario="${s.id}" aria-controls="scenarioPanel" aria-selected="${i===0}" tabindex="${i===0?0:-1}"><span>0${i+1}</span>${esc(s.label)}<span aria-hidden="true">↗</span></button>`).join('');
+  renderScenario();renderPrices();
+  $('priceNote').innerHTML=`<h4>Perplexity：保留价格空缺</h4><p>本次未取得当前 Web 套餐价。开发者在美国 App Store 列出的内购金额没有标明周期，不能直接进入月费图。</p><p class="micro">它仍参加能力比较；价格未知不等于免费。2025 年文章的报价也未当作当前报价。</p>${refs(['P01.4','P02.4'])}`;
+  $('planTable').innerHTML=`<caption class="sr-only">已采集个人套餐价格，均保留币种与计费口径</caption><thead><tr><th scope="col">产品 / 套餐</th><th scope="col">按月付款</th><th scope="col">年付总额</th><th scope="col">年付折算 / 月</th><th scope="col">适用口径</th><th scope="col">来源</th></tr></thead><tbody>${D.plans.map(p=>`<tr><td>${esc(products.get(p.product).name)}<small>${esc(p.name)}</small></td><td>${money(p.monthly,p.currency)}</td><td>${p.annual===null?'未收录':money(p.annual,p.currency)}</td><td>${p.annual===null?'—':money(p.annual/12,p.currency)}</td><td>${esc(p.region)}<small>${esc(p.tax)}；${esc(p.annual_note)}</small></td><td>${refs(p.evidence)}</td></tr>`).join('')}</tbody>`;
+  $('calcPlan').innerHTML=D.plans.filter(p=>p.annual!==null).map(p=>`<option value="${p.id}">${esc(products.get(p.product).name+' '+p.name)}</option>`).join('');
+  renderCalculator();
+  $('auditList').innerHTML=D.audit.map((a,i)=>`<article class="audit-item"><span class="audit-number">0${i+1}</span><div><h3>${esc(a.title)}</h3><p>${esc(a.observation)}</p>${refs(a.evidence)}</div><div class="audit-decision"><strong>采用口径</strong><p>${esc(a.decision)}</p><p class="audit-impact">${esc(a.impact)}</p></div></article>`).join('');
+  $('opportunities').innerHTML=D.opportunities.map(o=>`<article class="opportunity"><span class="priority">${esc(o.priority)} · 验证优先级</span><h3>${esc(o.title)}</h3><dl><dt>观察到什么</dt><dd>${esc(o.observation)}</dd><dt>如何判断</dt><dd>${esc(o.judgment)}</dd><dt>下一步怎样验证</dt><dd>${esc(o.proposal)}</dd></dl>${refs(o.evidence)}<p class="micro">${esc(o.boundary)}</p></article>`).join('');
+  $('limitations').innerHTML=D.limitations.map(l=>`<li>${esc(l)}</li>`).join('');
+  $('sourceCount').textContent=`${distinctURLs} 个页面，${D.sources.length} 条采集记录；同一套餐页的月付、年付分别留档。`;
+  renderSources();
 
-    <details>
-      <summary>查看评分原始数据表</summary>
-      <div class="table-scroll" style="margin-top:14px">
-        <table>
-          <thead>
-            <tr>
-              <th>产品</th><th>长文本</th><th>多模态</th><th>联网搜索</th><th>写作质量</th><th>性价比</th><th>综合</th>
-            </tr>
-          </thead>
-          <tbody id="scoreTable"></tbody>
-        </table>
-      </div>
-    </details>
-  </section>
-
-  <!-- ============ 4. 竞品对比表 ============ -->
-  <section>
-    <h2>03 · 竞品对比明细</h2>
-    <div class="table-scroll">
-      <table>
-        <thead>
-          <tr>
-            <th>评估维度</th>
-            <th><span class="pname"><span class="dot" style="background:var(--p1)"></span>豆包</span></th>
-            <th><span class="pname"><span class="dot" style="background:var(--p2)"></span>通义千问</span></th>
-            <th><span class="pname"><span class="dot" style="background:var(--p3)"></span>文心一言</span></th>
-            <th><span class="pname"><span class="dot" style="background:var(--p4)"></span>Kimi</span></th>
-            <th><span class="pname"><span class="dot" style="background:var(--p5)"></span>Claude</span></th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <th>核心定位</th>
-            <td>全民通用 AI 助手，泛 C 端高频日用</td>
-            <td>全能助手 + 办公/编程，阿里生态</td>
-            <td>搜索生态内 AI 助手（已更名"百度文心助手"）</td>
-            <td>长文本研究 + Agent/编程，偏专业用户</td>
-            <td>写作/编程/研究专业助手，海外主力</td>
-          </tr>
-          <tr>
-            <th>目标用户</th>
-            <td>大众消费者、学生、轻办公</td>
-            <td>办公人群、开发者、企业</td>
-            <td>搜索存量用户</td>
-            <td>研究者、程序员、重度文本工作者</td>
-            <td>知识工作者、开发者、企业</td>
-          </tr>
-          <tr>
-            <th>月活规模</th>
-            <td><strong class="num">3.82 亿</strong><br><span style="color:var(--muted);font-size:12.5px">国内第一</span></td>
-            <td><strong class="num">1.67 亿</strong></td>
-            <td><strong class="num">&lt; 500 万</strong><br><span style="color:var(--muted);font-size:12.5px">搜索内文心助手 3.6 亿</span></td>
-            <td><span class="flag num">729 万</span></td>
-            <td><span class="flag num">5,600 万</span></td>
-          </tr>
-          <tr>
-            <th>旗舰模型</th>
-            <td>豆包 2.1 Pro / Turbo</td>
-            <td>Qwen3.8-Max<br><span style="color:var(--muted);font-size:12.5px">2.4 万亿总参 / 950 亿激活</span></td>
-            <td>文心 5.1 / 5.0</td>
-            <td>K2.5 / K2.6 / K2.7 Code / K3</td>
-            <td>Opus 5、Sonnet 5、Fable 5.1</td>
-          </tr>
-          <tr>
-            <th>上下文窗口</th>
-            <td><strong class="num">256K</strong>（2.1 Pro/Turbo）<br><span class="flag">另有 128K 口径</span></td>
-
-            <td><strong class="num">1,000,000</strong> token</td>
-            <td>5.0 宣称 <strong class="num">1000 万</strong> token<br>ERNIE 4.5 Turbo 仅 128K</td>
-            <td>K2 128K｜K2.5–2.7 <strong class="num">256K</strong>｜K3 <strong class="num">1M</strong></td>
-            <td><span class="flag">Opus 5 | Sonnet 5 | Fable 5.1<br><strong class="num">1M</strong> token</span></td>
-          </tr>
-          <tr>
-            <th>多模态</th>
-            <td>文本 + 图像 + 语音 + 视频<br>（Seedance 2.5 生视频）</td>
-            <td>文本 + 图像 + <strong>视频输入</strong><br>输出仅文本</td>
-            <td><strong>全模态</strong>：文本+图片+视频+音频<br>文本→4K/60fps 视频生成</td>
-            <td>K2.7 Code 支持多模态<br>原版 K2 视觉/音频/PDF 未宣传</td>
-            <td>文本 + 图像 + PDF<br>无原生音视频生成</td>
-          </tr>
-          <tr>
-            <th>免费版</th>
-            <td><strong>永久免费不减频</strong><br>搜索问答/写作生图/语音视频</td>
-            <td>新用户北京区 100 万 token 试用</td>
-            <td>C 端全面免费<br>（2025-04-01 起）</td>
-            <td>统一额度池<br>免费版 ≈ <strong>6 个 Agent 用量/月</strong></td>
-            <td>Free $0，额度受限</td>
-          </tr>
-          <tr>
-            <th>免费版硬限制</th>
-            <td>专家模式/高清生图/长文档解析限额；视频生成不可用</td>
-            <td>仅限新用户 / 限时活动</td>
-            <td>每日 50 次对话、单次 ≤2000 字符<br><span class="flag">另有 1000+ 次口径</span></td>
-            <td>1 次深度研究 / 3 次 OK Computer / 3 次 PPT<br>上传 50 个/日、联网 20 次/日<br><strong>额度耗尽当月全功能冻结</strong></td>
-            <td>无 1M 上下文；模型档位受限</td>
-          </tr>
-          <tr>
-            <th>个人订阅</th>
-            <td>标准 <strong class="num">68</strong> 元/月（年 688）<br>加强 <strong class="num">200</strong> 元/月（年 2048）<br>高级 <strong class="num">500</strong> 元/月（年 5088）<br>学生认证 38 元/月</td>
-            <td>Token Plan：<br>Lite <strong class="num">39</strong> 元/月<br>Standard <strong class="num">139</strong> 元/月<br>Pro <strong class="num">499</strong> 元/月</td>
-            <td><span class="flag">联合会员 <strong class="num">99</strong> 元/月</span></td>
-            <td>Andante <strong class="num">49</strong> / Moderato <strong class="num">99</strong><br>Allegretto <strong class="num">199</strong> / Allegro <strong class="num">699</strong> 元/月<br>年付折合 39/79/159/559</td>
-            <td>Pro <strong class="num">$20</strong>/月（年付 $17）<br>Max 5× <strong class="num">$100</strong>/月<br>Max 20× <strong class="num">$200</strong>/月<br>Team $25/座起</td>
-          </tr>
-          <tr>
-            <th>API 价<br><span style="font-weight:400;color:var(--muted)">元 / 百万 token<br>（Claude 为 USD）</span></th>
-            <td>2.1 Pro 输出 ≈ <strong class="num">30</strong> 元<br>2.0 Lite 输入 $0.13 / 输出 $0.76</td>
-            <td>输入 <strong class="num">12</strong> / 输出 <strong class="num">36</strong><br>缓存命中 1.5</td>
-            <td>ERNIE 4.5 Turbo <strong class="num">0.8/3.2</strong><br>ERNIE 5.0 <strong class="num">6.0/24.0</strong></td>
-            <td>K2 $0.60 / $2.50<br>K3 $3 / $15</td>
-            <td><span class="flag">Sonnet 5 <strong class="num">$2 / $10</strong><br>Opus 5 <strong class="num">$5 / $25</strong><br>Fable 5.1 <strong class="num">$5 / $50</strong></span></td>
-          </tr>
-          <tr>
-            <th>写作模板</th>
-            <td>文案/公文/小红书/PPT 场景预设</td>
-            <td>办公写作、PPT、表格、公文</td>
-            <td>公文/营销文案 + 文心一格绘画</td>
-            <td>PPT 生成、深度研究报告、长文写作</td>
-            <td>Projects 自定义写作规范、Styles</td>
-          </tr>
-          <tr>
-            <th>文件上传</th>
-            <td>✅ 长文档无损解析（付费档十万字）</td>
-            <td>✅ 文档 / 图片 / 视频</td>
-            <td>✅</td>
-            <td>✅ 50MB/个、50 个/日</td>
-            <td>✅ 文本 / 图像 / PDF</td>
-          </tr>
-          <tr>
-            <th>联网搜索</th>
-            <td>✅ 免费无限制</td>
-            <td>✅</td>
-            <td>✅ 依托百度搜索</td>
-            <td>✅ 免费 <strong class="num">20</strong> 次/日</td>
-            <td>✅</td>
-          </tr>
-          <tr>
-            <th>Agent 能力</th>
-            <td>专家模式、办公任务模式、AI 编程、智能体</td>
-            <td>并发 Agent 额度（随 Token Plan）</td>
-            <td>智能体（含擦边人格化智能体）</td>
-            <td><strong>OK Computer</strong>、深度研究<br>Kimi Code（CLI/VSCode）、并行工具调用</td>
-            <td>MCP、Claude Code、Cowork、Skills</td>
-          </tr>
-          <tr>
-            <th>核心短板</th>
-            <td>① 付费后"变笨"吐槽集中爆发<br>② 幻觉严重（机票退票、订餐、农药致 150 亩绝收；20 题错 10 题）<br>③ 68 元起步价被嫌贵</td>
-            <td>① 写作"正确的废话"、模板化<br>② 长文上下文失忆<br>③ 文献引用造假、术语不准<br>④ 内容安全漏洞<br>⑤ 语音识别方言差、自我评价过高</td>
-            <td>① 月活从头部跌至 &lt;500 万<br>② 4 年 3 次改名，企业客户流失率 +15%<br>③ 回答夹带广告、画图翻车<br>④ 交互卡顿、无"新建对话"<br>⑤ 提现活动规则反复被投诉</td>
-            <td>① 免费额度收紧，<strong>耗尽后当月基础问答也冻结</strong><br>② Agent 仅 2 并发（99 元档）<br>③ 长上下文分层加价<br>④ 无严格 JSON-schema 结构化输出</td>
-            <td>① <strong>额度消耗过快</strong>，Max 20× 被指实际仅 6–8× Pro，已遭集体诉讼<br>② 降智争议（Sonnet IQ 被指 100→87.5）<br>③ Sonnet 5 反驳说教语气、Fable 5 护栏频繁回退<br>④ 客服 96h+ 无人工响应</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-    <p class="chart-note" style="border-top:none;padding-top:12px">
-      <span class="flag">橙字为人工复核。</span>
-      汇率按 1 USD ≈ 7.2 CNY 参考。
-    </p>
-  </section>
-
-  <!-- ============ 5. 产品机会分析 ============ -->
-  <section>
-    <h2>04 · 产品机会分析</h2>
-    <div class="opp">
-
-      <div class="opp-item">
-        <div class="opp-idx">01</div>
-        <div class="opp-body">
-          <h4>做「事实可核查」的写作助手，把引用溯源做成一级功能</h4>
-          <p>
-            本次调研中，5 款产品的差评<strong>没有一条指向文笔</strong>，全部指向事实性：豆包虚构退票手续费致用户损失 600 元、
-            千问文献引用造假、文心回答夹带广告。信通院数据也显示 20% 被测模型引用幻觉率 &gt;25%。
-            写作场景的真实痛点不是"写得不够好"，而是"不敢直接发出去"。
-          </p>
-          <p style="margin-top:10px">
-            落地：默认开启<strong>逐句溯源标注</strong>，每条事实性陈述挂可点击信源；无法溯源的内容自动标黄并要求用户确认；
-            导出时附带"未核实声明"清单。这条能力现有产品都没做成默认项，是明确的空白位。
-          </p>
-          <div class="opp-tags">
-            <span class="tag evi">证据：信通院 2025Q4 · 20% 模型引用幻觉率 &gt;25%</span>
-            <span class="tag">优先级 P0</span>
-          </div>
-        </div>
-      </div>
-
-      <div class="opp-item">
-        <div class="opp-idx">02</div>
-        <div class="opp-body">
-          <h4>用「额度确定性」打差异化，正面接住 Kimi 与 Claude 的流失用户</h4>
-          <p>
-            2026 年免费额度集体收紧：Kimi 改为统一额度池，<strong>耗尽后连基础问答都冻结</strong>；
-            Claude Max 20× 被指实际只有 6–8× Pro，已引发集体诉讼。同时豆包因"一收费就变笨"口碑受损。
-            用户的焦虑不是"贵"，而是<strong>不可预测</strong>。
-          </p>
-          <p style="margin-top:10px">
-            落地：主推<strong>"写作场景不计费"</strong>——纯文本写作与修改永久免费且不限次，只对 Agent 任务、生图、超长文档解析计费；
-            额度条实时可见并给出"当前额度还能写约 N 篇"的人话换算，而非积分数字。
-          </p>
-          <div class="opp-tags">
-            <span class="tag evi">证据：Kimi 免费版额度冻结规则 · Anthropic Max 集体诉讼</span>
-            <span class="tag">优先级 P0</span>
-          </div>
-        </div>
-      </div>
-
-      <div class="opp-item">
-        <div class="opp-idx">03</div>
-        <div class="opp-body">
-          <h4>切「长文一致性」，把长上下文从参数竞赛拉回体验竞赛</h4>
-          <p>
-            上下文长度已被卷到 1M–10M token，但用户反馈是千问"聊着聊着就忘记前面说过的设定"、
-            "历史消息还在却一脸茫然"。<strong>参数赢了，体验没赢</strong>——现有产品的长上下文是"读得进去"，
-            但不是"记得住、用得上"。
-          </p>
-          <p style="margin-top:10px">
-            落地：为长篇创作（小说、报告、系列文案）做<strong>显式记忆层</strong>——自动抽取并固化人设卡、世界观设定、
-            已用素材与结论清单，在侧栏可见可编辑；每次生成前强制注入并做冲突检测，提示"本章与第 7 章设定冲突"。
-          </p>
-          <div class="opp-tags">
-            <span class="tag evi">证据：知乎 22 章网文实测 · 千问上下文失忆反馈</span>
-            <span class="tag">优先级 P1</span>
-          </div>
-        </div>
-      </div>
-
-      <div class="opp-item">
-        <div class="opp-idx">04</div>
-        <div class="opp-body">
-          <h4>以「中文专业写作」为矛，吃下被通用模型放弃的细分人群</h4>
-          <p>
-            通用模型的写作评价高度一致："正确的废话"、模板化、术语不准（把"用户画像"写成"用户特征描述"）。
-            而 Claude 虽写作口碑最佳，却卡在付费墙、中文支付与网络门槛上，国内用户实际不可得。
-            这里存在一个<strong>"要求高但用不上 Claude"</strong>的人群：市场/运营、咨询、公文、学术。
-          </p>
-          <p style="margin-top:10px">
-            落地：不做通用助手，做<strong>垂直写作工作台</strong>——按行业预置术语库与文体规范（如公文格式、咨询报告结构），
-            内置"反 AI 腔"改写器针对模板化表达做定向剔除，并支持企业私有术语库上传。
-          </p>
-          <div class="opp-tags">
-            <span class="tag evi">证据：千问营销学论文术语误用 · Claude 中文区不可得</span>
-            <span class="tag">优先级 P1</span>
-          </div>
-        </div>
-      </div>
-
-      <div class="opp-item">
-        <div class="opp-idx">05</div>
-        <div class="opp-body">
-          <h4>把「免费不减频」当作长期承诺写进产品契约，而非营销话术</h4>
-          <p>
-            豆包是目前唯一宣称"免费版永久免费且不降频"的头部产品，但仍在付费版上线后遭遇大规模"变笨"质疑——
-            官方解释是算力分层与高峰期挤兑。这说明<strong>承诺本身不值钱，可验证的承诺才值钱</strong>。
-          </p>
-          <p style="margin-top:10px">
-            落地：公开<strong>服务质量看板</strong>——按日披露免费档的平均响应时延、可用率、模型版本号与变更日志；
-            版本更新提前 7 天公告并提供回滚按钮。把透明度做成品牌资产，直接对冲整个行业性的信任赤字。
-          </p>
-          <div class="opp-tags">
-            <span class="tag evi">证据：豆包"一收费就变笨"舆情 · Anthropic "nerfing" 争议</span>
-            <span class="tag">优先级 P2</span>
-          </div>
-        </div>
-      </div>
-
-    </div>
-  </section>
-
-  <!-- ============ 6. 项目复盘 ============ -->
-  <section>
-    <h2>05 · 项目复盘</h2>
-    <div class="retro">
-      <p>
-        本项目由大模型完成从竞品调研、数据整理、维度打分到可视化页面产出的<strong>全流程</strong>。
-      </p>
-      <p>
-        <strong>验证的结论：</strong>AI 可以独立完成"信息检索 → 结构化对比 → 结论提炼 → 可交付物产出"的完整链路，
-        把一份竞品调研从 2–3 人日压缩到约 1 小时。产品经理的角色从"执行分析"前移到<strong>定义维度、判断取舍、校验事实</strong>。
-      </p>
-      <p>
-        <strong>暴露的边界：</strong>① 事实性仍需人工兜底——本次有 5 处数据（文心订阅价、Kimi 月活、Claude 月活、
-        Claude API 价、Claude 上下文）出现多来源冲突或官方未公开，均已人工复核后以<strong>橙字</strong>标出；
-        ② AI 会倾向给出整齐好看的评分，需明确要求标注主观性与评分依据；
-        ③ 配色与可读性不能凭感觉——本项目按色盲可辨性阈值校验后，主动放弃"5 条雷达叠加"改为小倍数呈现。
-      </p>
-      <p>
-        <strong>对产品工作的启示：</strong>AI 辅助调研的价值不在更快地生成内容，而在于
-        <strong>让人把时间花在只有人能做的事上</strong>——判断哪个矛盾是真信号、哪个机会值得下注、哪条数据不能信。
-      </p>
-    </div>
-  </section>
-
-  <footer>
-    <p>
-      <strong style="color:var(--text-secondary)">数据来源：</strong>
-      <a href="https://www.alibabacloud.com/help/zh/model-studio/model-pricing" target="_blank" rel="noopener">阿里云百炼定价</a> ·
-      <a href="https://www.kimi.com/resources/kimi-k3-pricing" target="_blank" rel="noopener">Kimi 官方定价</a> ·
-      <a href="https://support.claude.com/en/articles/8606394-how-large-is-the-context-window-on-paid-claude-plans" target="_blank" rel="noopener">Anthropic 官方帮助中心</a> ·
-      <a href="https://www.cnet.com/tech/services-and-software/anthropic-sued-alleged-false-advertising-claude-max-subscription-usage-limits/" target="_blank" rel="noopener">CNET · Max 订阅诉讼</a> ·
-      <a href="https://venturebeat.com/technology/is-anthropic-nerfing-claude-users-increasingly-report-performance" target="_blank" rel="noopener">VentureBeat · nerfing 争议</a> ·
-      QuestMobile 2026-06 · 中国信通院大模型幻觉测试 2025Q4
-    </p>
-    <p style="margin-top:12px">AI 产品作品集项目 · 竞品调研与可视化 · 数据截止 2026-09 · 页面由大模型生成</p>
-  </footer>
-
-</div>
-
-<script>
-(function(){
-  "use strict";
-
-  /* ---------- 设计令牌（与 CSS 变量同源） ---------- */
-  const T = {
-    surface : '#1a1a19',
-    grid    : '#2c2c2a',
-    axis    : '#383835',
-    text    : '#ffffff',
-    second  : '#c3c2b7',
-    muted   : '#898781'
-  };
-
-  // 产品 = 实体色，整页一致；顺序即分类色槽顺序（相邻配对已验证通过）
-  const PRODUCTS = [
-    { key:'doubao',  name:'豆包',     color:'#3987e5' },
-    { key:'qwen',    name:'通义千问', color:'#d95926' },
-    { key:'wenxin',  name:'文心一言', color:'#199e70' },
-    { key:'kimi',    name:'Kimi',     color:'#c98500' },
-    { key:'claude',  name:'Claude',   color:'#d55181' }
-  ];
-
-  /* ---------- 数据 ---------- */
-  // 免费档可调用上下文，单位 K token
-  const CTX = [
-    { name:'文心一言', value:10000, claimed:true  },
-    { name:'通义千问', value:1000,  claimed:false },
-    { name:'豆包',     value:256,   claimed:false },
-    { name:'Kimi',     value:256,   claimed:false },
-    { name:'Claude',   value:200,   claimed:false }
-  ];
-  // 颜色按产品查表，不按柱序（颜色跟随实体，不跟随排名）
-  const colorOf = n => (PRODUCTS.find(p => p.name === n) || {}).color || T.muted;
-
-  const DIMS = ['长文本','多模态','联网搜索','写作质量','性价比'];
-  const SCORES = {
-    doubao: [3,5,5,3,5],
-    qwen:   [5,4,4,3,4],
-    wenxin: [4,5,4,3,5],
-    kimi:   [4,3,3,4,2],
-    claude: [5,3,4,5,3]
-  };
-
-  /* ---------- 通用：色块透明化 ---------- */
-  const alpha = (hex,a) => {
-    const h = hex.replace('#','');
-    const n = parseInt(h,16);
-    return `rgba(${(n>>16)&255},${(n>>8)&255},${n&255},${a})`;
-  };
-
-  /* ---------- 图表 1：柱状图（单一测度 → 单一色相，身份由轴标签承担） ---------- */
-  const barLabelsPlugin = {
-    id:'barLabels',
-    afterDatasetsDraw(chart){
-      const { ctx } = chart;
-      const meta = chart.getDatasetMeta(0);
-      ctx.save();
-      ctx.font = '600 13px system-ui,-apple-system,"Segoe UI",sans-serif';
-      ctx.textAlign = 'center';
-      ctx.textBaseline = 'bottom';
-      meta.data.forEach((bar,i)=>{
-        const v = chart.data.datasets[0].data[i];
-        const label = v.toLocaleString('en-US') + 'K' +
-          (CTX[i].claimed ? ' *' : '');
-        ctx.fillStyle = T.second;
-        ctx.fillText(label, bar.x, bar.y - 10);
-      });
-      ctx.restore();
-    }
-  };
-
-  new Chart(document.getElementById('ctxChart'), {
-    type:'bar',
-    data:{
-      labels: CTX.map(d => d.name),
-      datasets:[{
-        label:'免费上下文（K token）',
-        data: CTX.map(d => d.value),
-        backgroundColor: '#3987e5',
-        hoverBackgroundColor: '#5598e7',
-        borderRadius:{ topLeft:4, topRight:4, bottomLeft:0, bottomRight:0 },
-        borderSkipped:'bottom',
-        barPercentage:0.52,
-        categoryPercentage:0.72
-      }]
-    },
-    options:{
-      responsive:true,
-      maintainAspectRatio:false,
-      layout:{ padding:{ top:34, right:12, left:4, bottom:0 } },
-      plugins:{
-        legend:{ display:false }, // 单系列：标题已点明测度，无需图例
-        tooltip:{
-          backgroundColor:'#212120',
-          borderColor:'rgba(255,255,255,0.10)',
-          borderWidth:1,
-          titleColor:T.text,
-          bodyColor:T.second,
-          padding:12,
-          cornerRadius:8,
-          displayColors:false,
-          callbacks:{
-            label: c => {
-              const d = CTX[c.dataIndex];
-              const txt = d.value.toLocaleString('en-US') + 'K token ≈ ' +
-                          (d.value/1000).toFixed(d.value<1000?2:1) + 'M';
-              return d.claimed ? [txt, '官方宣传口径，API 主力模型实为 128K'] : txt;
-            }
-          }
-        }
-      },
-      scales:{
-        x:{
-          grid:{ display:false },
-          border:{ color:T.axis },
-          ticks:{ color:T.second, font:{ size:13, weight:'600' }, padding:8 }
-        },
-        y:{
-          beginAtZero:true,
-          grid:{ color:T.grid, drawTicks:false },
-          border:{ display:false },
-          ticks:{
-            color:T.muted, padding:10,
-            font:{ size:12 },
-            callback: v => v >= 1000 ? (v/1000)+'M' : v+'K'
-          },
-          title:{
-            display:true, text:'免费可用上下文（token）',
-            color:T.muted, font:{ size:12 }, padding:{ bottom:6 }
-          }
-        }
-      }
-    },
-    plugins:[barLabelsPlugin]
+  document.addEventListener('click',event=>{
+    const cell=event.target.closest('[data-product][data-dimension]');
+    if(cell){showCell(cell.dataset.product,cell.dataset.dimension);return;}
+    const evidence=event.target.closest('[data-evidence]');
+    if(evidence){openDialog('来源与原文摘录',evidenceBlocks(evidence.dataset.evidence.split('|')));return;}
+    const group=event.target.closest('[data-group]');if(group){state.group=group.dataset.group;renderTable();return;}
+    const scenario=event.target.closest('[data-scenario]');if(scenario){state.scenario=scenario.dataset.scenario;renderScenario();return;}
+    const billing=event.target.closest('[data-billing]');if(billing){state.billing=billing.dataset.billing;renderPrices();}
   });
-
-  /* ---------- 图表 2：雷达小倍数（每图单系列，身份由标题承担） ---------- */
-  const grid = document.getElementById('radarGrid');
-
-  PRODUCTS.forEach(p => {
-    const vals = SCORES[p.key];
-    const avg  = (vals.reduce((a,b)=>a+b,0) / vals.length).toFixed(2);
-
-    const cell = document.createElement('div');
-    cell.className = 'radar-cell';
-    cell.innerHTML =
-      '<div class="radar-title">' +
-        '<span class="dot" style="background:'+p.color+'"></span>' + p.name +
-      '</div>' +
-      '<div class="radar-score">综合 ' + avg + ' / 5.00</div>' +
-      '<div class="radar-box"><canvas></canvas></div>';
-    grid.appendChild(cell);
-
-    new Chart(cell.querySelector('canvas'), {
-      type:'radar',
-      data:{
-        labels: DIMS,
-        datasets:[{
-          label: p.name,
-          data: vals,
-          borderColor: p.color,
-          backgroundColor: alpha(p.color, 0.14),
-          borderWidth: 2,
-          pointBackgroundColor: p.color,
-          pointBorderColor: T.surface,
-          pointBorderWidth: 2,
-          pointRadius: 3.5,
-          pointHoverRadius: 5
-        }]
-      },
-      options:{
-        responsive:true,
-        maintainAspectRatio:false,
-        plugins:{
-          legend:{ display:false }, // 单系列：标题已点明产品
-          tooltip:{
-            backgroundColor:'#212120',
-            borderColor:'rgba(255,255,255,0.10)',
-            borderWidth:1,
-            titleColor:T.text,
-            bodyColor:T.second,
-            padding:10,
-            cornerRadius:8,
-            displayColors:false,
-            callbacks:{ label: c => c.label + '：' + c.parsed.r + ' / 5' }
-          }
-        },
-        scales:{
-          r:{
-            min:0, max:5,
-            ticks:{ stepSize:1, display:false },
-            grid:{ color:T.grid, circular:false },
-            angleLines:{ color:T.grid },
-            pointLabels:{ color:T.second, font:{ size:11.5, weight:'600' } }
-          }
-        }
-      }
-    });
+  $('productFilters').addEventListener('change',event=>{
+    const id=event.target.dataset.filterProduct;if(!id)return;
+    event.target.checked?state.selected.add(id):state.selected.delete(id);renderTable();
   });
-
-  /* ---------- 评分原始数据表（表格视图，供无障碍与核对） ---------- */
-  const tbody = document.getElementById('scoreTable');
-  PRODUCTS.forEach(p => {
-    const vals = SCORES[p.key];
-    const avg = (vals.reduce((a,b)=>a+b,0) / vals.length).toFixed(2);
-    const tr = document.createElement('tr');
-    tr.innerHTML =
-      '<th style="position:static;border-right:none;background:transparent;font-size:13px">' +
-        '<span style="display:inline-flex;align-items:center;gap:8px">' +
-          '<span class="dot" style="background:'+p.color+'"></span>' + p.name +
-        '</span>' +
-      '</th>' +
-      vals.map(v => '<td class="num">'+v+'</td>').join('') +
-      '<td class="num"><strong>'+avg+'</strong></td>';
-    tbody.appendChild(tr);
+  $('resetFilters').addEventListener('click',()=>{state.selected=new Set(D.products.map(p=>p.id));state.group='all';renderTable();});
+  $('scenarioTabs').addEventListener('keydown',event=>{
+    if(!['ArrowRight','ArrowLeft','ArrowUp','ArrowDown','Home','End'].includes(event.key))return;
+    event.preventDefault();let index=D.scenarios.findIndex(s=>s.id===state.scenario);
+    if(event.key==='Home')index=0;else if(event.key==='End')index=D.scenarios.length-1;else index=(index+(['ArrowRight','ArrowDown'].includes(event.key)?1:-1)+D.scenarios.length)%D.scenarios.length;
+    state.scenario=D.scenarios[index].id;renderScenario();$('scenario-'+state.scenario).focus();
   });
-
+  $('closeDialog').addEventListener('click',()=>$('detailDialog').close());
+  $('detailDialog').addEventListener('click',e=>{if(e.target===$('detailDialog')){const r=e.target.getBoundingClientRect();if(e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom)e.target.close();}});
+  $('taskButton').addEventListener('click',()=>openDialog('统一复测任务卡',`<p>此任务卡用于后续五款产品的同题研究。执行时应记录账号套餐、模型、日期、原始结果和实际消耗；当前报告未把任务设计当作实测。</p><pre class="task-text">${esc(D.task_prompt)}</pre>`,'REPRODUCIBLE TASK'));
+  $('downloadTask').addEventListener('click',downloadTask);
+  $('downloadData').addEventListener('click',()=>download('research-'+D.meta.date+'.json',JSON.stringify(D,null,2),'application/json;charset=utf-8'));
+  $('calcPlan').addEventListener('change',renderCalculator);$('calcMonths').addEventListener('input',renderCalculator);
+  $('sourceSearch').addEventListener('input',renderSources);
+  $('printButton').addEventListener('click',()=>window.print());
+  let savedPrintState=null;
+  window.addEventListener('beforeprint',()=>{
+    if(savedPrintState)return;
+    savedPrintState={selected:new Set(state.selected),group:state.group,billing:state.billing,search:$('sourceSearch').value,open:[...document.querySelectorAll('.source-item[open]')].map(e=>e.id),plans:document.querySelector('.plan-details').open};
+    state.selected=new Set(D.products.map(p=>p.id));state.group='all';state.billing='monthly';$('sourceSearch').value='';renderTable();renderPrices();renderSources();
+    $('scenarioPanel').innerHTML=D.scenarios.map(s=>`<article class="print-scenario">${scenarioHTML(s)}</article>`).join('');
+    document.querySelectorAll('.source-item,.plan-details').forEach(e=>e.open=true);
+  });
+  window.addEventListener('afterprint',()=>{
+    if(!savedPrintState)return;
+    const saved=savedPrintState;savedPrintState=null;state.selected=saved.selected;state.group=saved.group;state.billing=saved.billing;$('sourceSearch').value=saved.search;
+    renderTable();renderPrices();renderSources();renderScenario();saved.open.forEach(id=>{if($(id))$(id).open=true;});document.querySelector('.plan-details').open=saved.plans;
+  });
+  const observer=new IntersectionObserver(entries=>entries.forEach(entry=>{
+    if(entry.isIntersecting)document.querySelectorAll('.nav-inner a').forEach(a=>a.classList.toggle('active',a.hash==='#'+entry.target.id));
+  }),{rootMargin:'-12% 0px -62% 0px',threshold:0});
+  document.querySelectorAll('section[id]').forEach(s=>observer.observe(s));
 })();
 </script>
 </body>
